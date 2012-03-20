@@ -16,8 +16,8 @@ solution "libmz"
       targetdir ( "bin" )
       libdirs { "/usr/lib" }
       links { "SDL", "SDL_image", "GLEW", "GL" }
-      includedirs { "/usr/include" }
-      files { "src/*.h", "src/*.c" }
+      includedirs { "/usr/include", "include" }
+      files { "include/*.h", "src/**.h", "src/**.c" }
  
       configuration "Debug"
          defines { "DEBUG" }
