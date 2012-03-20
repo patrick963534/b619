@@ -44,9 +44,6 @@ static SDL_Surface *load_image_with_alpha(const char* path)
 static void load_image_to_gl()
 {
 	image_surface = load_image_with_alpha("/home/patrick/image/1.png");
-	if (image_surface)
-		printf("get image surface.\n");
-
 	if ((image_surface->w & (image_surface->w - 1)) != 0 || (image_surface->h & (image_surface->h - 1)) != 0){
 		printf("warning: the surface width/height is not a power of 2. \r\n");
 		return;
