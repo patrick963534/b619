@@ -37,7 +37,7 @@ static void load_image_to_gl()
 	}
 }
 
-void bind_texture(TEXTURE_ID id)
+void mz_texture_bind_graphics(TEXTURE_ID id)
 {
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -49,12 +49,12 @@ void bind_texture(TEXTURE_ID id)
 		    texture_format, GL_UNSIGNED_BYTE, image_surface->pixels);
 }
 
-void delete_texture(TEXTURE_ID id)
+void mz_texture_delete(TEXTURE_ID id)
 {
 
 }
 
-TEXTURE_ID load_image(const char* filepath)
+TEXTURE_ID mz_texture_load(const char* filepath)
 {
     load_image_to_gl();
 }

@@ -3,9 +3,9 @@
 
 #include <mz/defs.h>
 
-TEXTURE_ID load_texture(const char* filepath);
-void delete_texture(TEXTURE_ID id);
+TEXTURE_ID mz_texture_load(const char* filepath);
+void mz_texture_delete(TEXTURE_ID id);
 
-void bind_texture(TEXTURE_ID id);
+void mz_texture_bind_graphics(TEXTURE_ID id);
 
 #endif

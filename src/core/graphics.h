@@ -4,3 +4,5 @@
 void clear();
 void draw_texture(TEXTURE_ID id);
 void flush();
+
+#endif
