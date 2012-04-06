@@ -4,18 +4,18 @@
 
 GLuint texture;
 
-void clear()
+void mz_graphics_clear()
 {
-    glClearColor(1, 1, 1, 1);
+    glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void flush()
+void mz_graphics_flush()
 {
     SDL_GL_SwapBuffers();
 }
 
-void draw_texture(TEXTURE_ID id)
+void mz_graphics_draw_texture(TEXTURE_ID id)
 {
     glLoadIdentity();
 

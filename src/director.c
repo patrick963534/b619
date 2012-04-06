@@ -2,7 +2,8 @@
 #include <mz/scene.h>
 #include <mz/defs.h>
 #include "core/system.h"
-
+#include "core/texture.h"
+#include "core/graphics.h"
 #include "event.h"
 
 static int is_system_init;
@@ -10,7 +11,10 @@ static mz_scene_t *scene_;
 
 static void director_render()
 {
-    printf("render");
+    mz_graphics_clear();
+    mz_texture_bind_graphics(0);   
+    mz_graphics_draw_texture(0);
+    mz_graphics_flush();
 }
 
 static void director_update()
