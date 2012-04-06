@@ -9,10 +9,11 @@ int texture_format;
 
 static SDL_Surface *load_image_with_alpha(const char* path)
 {
-	SDL_Surface *temp = IMG_Load(path);
-	SDL_Surface *val = SDL_DisplayFormatAlpha(temp);
-	SDL_FreeSurface(temp);
-	return val;
+	//SDL_Surface *temp = IMG_Load(path);
+	//SDL_Surface *val = SDL_DisplayFormatAlpha(temp);
+	//SDL_FreeSurface(temp);
+	//return val;
+    return IMG_Load(path);
 }
 
 static void load_image_to_gl()
