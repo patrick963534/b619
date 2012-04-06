@@ -9,6 +9,7 @@ typedef struct mz_system_t
 } mz_system_t;
 
 void mz_system_init();
+void mz_system_quit();
 mz_system_t *mz_system_instance();
 
 #endif

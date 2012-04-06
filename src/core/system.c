@@ -27,9 +27,6 @@ static int get_sdl_event(mz_event_t *event)
 		else if (e.type == SDL_QUIT)
 			event->type = e.type;
 	
-
-		printf("event trigger. \n");
-
 		return 1;
 	}
 	return 0;
@@ -52,21 +49,20 @@ static void sdl_opengl_init()
 {
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-        if((display_surface = SDL_SetVideoMode(640, 480, 32, 
-		SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL)) == NULL) {
-                return;
-        }
+    if((display_surface = SDL_SetVideoMode(640, 480, 32, 
+        SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL)) == NULL) {
+            return;
+    }
 
-        glClearColor(0, 0, 0, 0);
-        glViewport(0, 0, 640, 480);
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(0, 640, 480, 0, 1, -1);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+    glClearColor(0, 0, 0, 0);
+    glViewport(0, 0, 640, 480);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, 640, 480, 0, 1, -1);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 
-        glEnable(GL_TEXTURE_2D);
-	
+    glEnable(GL_TEXTURE_2D);
 }
 
 void mz_system_init()
@@ -74,6 +70,11 @@ void mz_system_init()
 	sdl_opengl_init();
 
 	_system.wait_event = wait_event;
+}
+
+void mz_system_quit()
+{
+
 }
 
 mz_system_t *mz_system_instance()

@@ -1,6 +1,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <GL/glew.h>
+#include <mz/defs.h>
 
 SDL_Surface *image_surface;
 GLenum texture;
@@ -34,7 +35,10 @@ static void load_image_to_gl()
 	{
 		printf("wrong.");
 	}
+}
 
+void bind_texture(TEXTURE_ID id)
+{
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -43,4 +47,14 @@ static void load_image_to_gl()
 	glTexImage2D(GL_TEXTURE_2D, 0, image_surface->format->BytesPerPixel, 
 		    image_surface->w, image_surface->h, 0, 
 		    texture_format, GL_UNSIGNED_BYTE, image_surface->pixels);
+}
+
+void delete_texture(TEXTURE_ID id)
+{
+
+}
+
+TEXTURE_ID load_image(const char* filepath)
+{
+    load_image_to_gl();
 }

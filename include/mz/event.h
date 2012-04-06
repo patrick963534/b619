@@ -17,9 +17,9 @@ typedef struct mz_event_t
 
 typedef struct mz_event_type_t
 {
-	int	update_frame;
-	int	key_down;
-	int	key_up;
+	int	UpdateFrame;
+	int	KeyDown;
+	int	KeyUp;
 } mz_event_type_t;
 
 typedef struct mz_keys_t

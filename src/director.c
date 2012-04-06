@@ -29,13 +29,10 @@ MZ_API void mz_director_loop()
 
 		mz_system_instance()->wait_event(&event);
 
-		printf("loop\n");
-
-		if (event.type == mz.types.key_up && event.keyboard.keycode == mz.keys.Escape)
-			return;
-		else if (event.type == mz.types.update_frame)
+        if (event.type == mz.types.UpdateFrame)
 			director_update();
-
+        else if (event.type == mz.types.KeyUp && event.keyboard.keycode == mz.keys.Escape)
+			break;
 		
 	}
 }

@@ -1,12 +1,22 @@
 #include <SDL/SDL.h>
 #include <GL/glew.h>
+#include "texture.h"
 
 GLuint texture;
 
-static void render()
+void clear()
 {
 	glClearColor(1, 1, 1, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void flush()
+{
+	SDL_GL_SwapBuffers();
+}
+
+void draw_texture(TEXTURE_ID id)
+{
 	glLoadIdentity();
 
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -20,6 +30,4 @@ static void render()
 		glTexCoord2i(1, 1); glVertex3i(256, 256, 0);
 		glTexCoord2i(0, 1); glVertex3i(0, 256, 0);
 	glEnd();
-
-	SDL_GL_SwapBuffers();
 }
