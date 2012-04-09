@@ -13,8 +13,7 @@ static mz_scene_t *scene_;
 static void director_render()
 {
     mz_graphics_clear();
-    mz_texture_bind_graphics(0);   
-    mz_graphics_draw_texture(0);
+    mz_graphics_draw_texture(mz_texture_bind_graphics(0));
     mz_graphics_flush();
 }
 

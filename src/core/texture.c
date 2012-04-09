@@ -41,7 +41,32 @@ static SDL_Surface* load_image_with_alpha(const char *path)
     return IMG_Load(path);
 }
 
-static int load_image_to_gl(const char *path)
+GLuint mz_texture_bind_graphics(TEXTURE_ID id)
+{
+    GLuint t = 0;
+    texture_data_t *texture = temp_texture;
+
+    logI("%d x %d", texture->surface->w, texture->surface->h);
+
+	glGenTextures(1, &t);
+    logI("%d", (int)t);
+	glBindTexture(GL_TEXTURE_2D, t);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, texture->surface->format->BytesPerPixel, texture->surface->w, 
+                                texture->surface->h, 0, texture->format, 
+                                GL_UNSIGNED_BYTE, texture->surface->pixels);
+
+    return t;
+}
+
+void mz_texture_delete(TEXTURE_ID id)
+{
+
+}
+
+TEXTURE_ID mz_texture_load(const char *path)
 {
     texture_data_t *texture = mz_malloc(sizeof(*texture));
 	SDL_Surface *surface = load_image_with_alpha(path); 
@@ -49,9 +74,9 @@ static int load_image_to_gl(const char *path)
     if (IS_POWER_OF_2(surface->w) || IS_POWER_OF_2(surface->h)) 
 		goto error;
 
-	if(surface->format->BytesPerPixel==4) //contains an alpha channel 
+	if(surface->format->BytesPerPixel == 4)
 		texture->format = (surface->format->Rmask==0x000000ff) ? GL_RGBA : GL_BGRA;
-	else if(surface->format->BytesPerPixel==3) //no alpha channel 
+	else if(surface->format->BytesPerPixel == 3)
 		texture->format = (surface->format->Rmask==0x000000ff) ? GL_RGB : GL_BGR;
 	else
 		goto error;
@@ -65,7 +90,7 @@ static int load_image_to_gl(const char *path)
 
     temp_texture = texture;
 
-    return 0;
+    return texture->id;
 
 error:
     if (surface)
@@ -73,30 +98,5 @@ error:
 
     logI("load image %s wrong.", path);
 
-    return 1;
-}
-
-void mz_texture_bind_graphics(TEXTURE_ID id)
-{
-    GLenum t = 0;
-    texture_data_t *texture = temp_texture;
-
-	glGenTextures(1, &t);
-	glBindTexture(GL_TEXTURE_2D, t);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, texture->surface->format->BytesPerPixel, texture->surface->w, 
-                                texture->surface->h, 0, texture->format, 
-                                GL_UNSIGNED_BYTE, texture->surface->pixels);
-}
-
-void mz_texture_delete(TEXTURE_ID id)
-{
-
-}
-
-TEXTURE_ID mz_texture_load(const char *filepath)
-{
-    load_image_to_gl(filepath);
+    return 0;
 }

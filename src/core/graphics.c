@@ -2,8 +2,6 @@
 #include <GL/glew.h>
 #include "texture.h"
 
-GLuint texture;
-
 void mz_graphics_clear()
 {
     glClearColor(0, 0, 0, 1);
@@ -15,7 +13,7 @@ void mz_graphics_flush()
     SDL_GL_SwapBuffers();
 }
 
-void mz_graphics_draw_texture(TEXTURE_ID id)
+void mz_graphics_draw_texture(GLuint texture)
 {
     glLoadIdentity();
 
