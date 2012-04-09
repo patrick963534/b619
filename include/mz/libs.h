@@ -7,6 +7,7 @@
 #include <mz/defs.h>
 
 #define mz_malloc(size) malloc(size)
+#define mz_strdup(str) strdup(str)
 
 MZ_API void print_log(const char *type, const char *format, ...);
 
