@@ -20,7 +20,7 @@ static void director_render()
 
 static void director_update()
 {
-    logI("%s", "Update");
+    logI("Update");
 }
 
 MZ_API void mz_director_loop()

@@ -10,6 +10,6 @@
 
 MZ_API void print_log(const char *type, const char *format, ...);
 
-#define logI(format, args...) print_log("Info", format, args) 
+#define logI(args...) print_log("Info", args) 
 
 #endif
