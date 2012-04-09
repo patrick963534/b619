@@ -1,18 +1,29 @@
 #include "system.h"
-#include "util.c.h"
 #include <SDL/SDL.h>
 #include <GL/glew.h>
+#include <mz/event.h>
+#include <mz/libs.h>
+#include "util.c.h"
 
 static mz_system_t _system;
 static SDL_Surface *display_surface;
 
 static int get_timer_event(mz_event_t *event)
 {
-
+    return 0;
 }
 
 static int get_update_event(mz_event_t *event)
 {
+    static Uint32 time = 0;
+    Uint32 new_time = SDL_GetTicks();
+
+    if (new_time - time > 300) {
+        time = new_time;
+        event->type = mz.events.UpdateFrame;
+        return 1;
+    }
+
 	return 0;
 }
 
@@ -21,7 +32,6 @@ static int get_sdl_event(mz_event_t *event)
 	SDL_Event e;
 	if (SDL_PollEvent(&e)) {
 		event->type = e.type;
-
 		if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP)
 			event->keyboard.keycode = e.key.keysym.sym;
 		else if (e.type == SDL_QUIT)
@@ -40,6 +50,9 @@ static void wait_event(mz_event_t *event)
 		
 		if (get_sdl_event(event))
 			return;
+
+        if (get_timer_event(event))
+            return;
 
 		mz_sleep(32);
 	}

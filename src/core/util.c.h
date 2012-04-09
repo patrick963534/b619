@@ -3,6 +3,6 @@
 
 #include <mz/defs.h>
 
-MZ_API void mz_sleep(int ms);
+void mz_sleep(int ms);
 
 #endif

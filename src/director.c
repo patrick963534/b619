@@ -1,6 +1,7 @@
 #include <mz/director.h>
 #include <mz/scene.h>
 #include <mz/defs.h>
+#include <mz/libs.h>
 #include "core/system.h"
 #include "core/texture.h"
 #include "core/graphics.h"
@@ -19,7 +20,7 @@ static void director_render()
 
 static void director_update()
 {
-
+    logI("%s", "Update");
 }
 
 MZ_API void mz_director_loop()
@@ -36,9 +37,9 @@ MZ_API void mz_director_loop()
 
 		mz_system_instance()->wait_event(&event);
 
-        if (event.type == mz.types.UpdateFrame)
+        if (event.type == mz.events.UpdateFrame)
 			director_update();
-        else if (event.type == mz.types.KeyUp && event.keyboard.keycode == mz.keys.Escape)
+        else if (event.type == mz.events.KeyUp && event.keyboard.keycode == mz.keys.Escape)
 			break;
 		
 	}

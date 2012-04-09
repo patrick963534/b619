@@ -39,7 +39,7 @@ typedef struct mz_keys_t
 
 typedef struct mz_constants_t
 {
-	mz_event_type_t	types;
+	mz_event_type_t	events;
 	mz_keys_t	keys;
 } mz_constants_t;
 
