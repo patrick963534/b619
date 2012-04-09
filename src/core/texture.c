@@ -60,6 +60,7 @@ static int load_image_to_gl(const char *path)
     texture->surface = surface;
     texture->filename = mz_strdup(path);
 
+    INIT_LIST_HEAD(&texture->element_);
     list_move_tail(&get_texture_manager()->element_, &texture->element_);
 
     temp_texture = texture;
