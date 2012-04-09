@@ -5,7 +5,7 @@
 #include <mz/list.h>
 #include <mz/libs.h>
 
-#define IS_POWER_OF_2(v) (((w & (w - 1)) != 0)
+#define IS_POWER_OF_2(v) (((v) & ((v) - 1)) != 0)
 
 typedef struct texture_data_t
 {
@@ -15,11 +15,12 @@ typedef struct texture_data_t
     SDL_Surface*    surface;
     TEXTURE_ID      id;
     int             format;
-}
+} texture_data_t;
 
-static TEXTURE_ID texture_id_counter = 0xff;
+static TEXTURE_ID texture_id_counter;
+static texture_data_t* temp_texture;
 
-static texture_manager* get_texture_manager()
+static texture_data_t* get_texture_manager()
 {
     static texture_data_t texture_manager;
 
@@ -43,7 +44,7 @@ static SDL_Surface* load_image_with_alpha(const char *path)
 static int load_image_to_gl(const char *path)
 {
     texture_data_t *texture = mz_malloc(sizeof(*texture));
-	SDL_Surface *surface = load_image_with_alpha(path); //"/home/patrick/image/1.png");
+	SDL_Surface *surface = load_image_with_alpha(path); 
 
     if (IS_POWER_OF_2(surface->w) || IS_POWER_OF_2(surface->h)) 
 		goto error;
@@ -51,7 +52,7 @@ static int load_image_to_gl(const char *path)
 	if(surface->format->BytesPerPixel==4) //contains an alpha channel 
 		texture->format = (surface->format->Rmask==0x000000ff) ? GL_RGBA : GL_BGRA;
 	else if(surface->format->BytesPerPixel==3) //no alpha channel 
-		texture-format = (surface->format->Rmask==0x000000ff) ? GL_RGB : GL_BGR;
+		texture->format = (surface->format->Rmask==0x000000ff) ? GL_RGB : GL_BGR;
 	else
 		goto error;
 
@@ -61,11 +62,13 @@ static int load_image_to_gl(const char *path)
 
     list_move_tail(&get_texture_manager()->element_, &texture->element_);
 
+    temp_texture = texture;
+
     return 0;
 
 error:
-    if (image_surface)
-        SDL_FreeSurface(image_surface);
+    if (surface)
+        SDL_FreeSurface(surface);
 
     logI("load image %s wrong.", path);
 
@@ -74,17 +77,17 @@ error:
 
 void mz_texture_bind_graphics(TEXTURE_ID id)
 {
-    GLenum texture = 0;
-    SDL_Surface *surface = NULL;
+    GLenum t = 0;
+    texture_data_t *texture = temp_texture;
 
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glGenTextures(1, &t);
+	glBindTexture(GL_TEXTURE_2D, t);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, surface->format->BytesPerPixel, surface->w, 
-                                surface->h, 0, texture_format, 
-                                GL_UNSIGNED_BYTE, image_surface->pixels);
+	glTexImage2D(GL_TEXTURE_2D, 0, texture->surface->format->BytesPerPixel, texture->surface->w, 
+                                texture->surface->h, 0, texture->format, 
+                                GL_UNSIGNED_BYTE, texture->surface->pixels);
 }
 
 void mz_texture_delete(TEXTURE_ID id)
@@ -94,5 +97,5 @@ void mz_texture_delete(TEXTURE_ID id)
 
 TEXTURE_ID mz_texture_load(const char *filepath)
 {
-    load_image_to_gl();
+    load_image_to_gl(filepath);
 }
