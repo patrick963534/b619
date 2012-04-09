@@ -46,8 +46,6 @@ GLuint mz_texture_bind_graphics(TEXTURE_ID id)
     GLuint t = 0;
     texture_data_t *texture = temp_texture;
 
-    logI("%d x %d", texture->surface->w, texture->surface->h);
-
 	glGenTextures(1, &t);
     logI("%d", (int)t);
 	glBindTexture(GL_TEXTURE_2D, t);

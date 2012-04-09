@@ -13,8 +13,10 @@ void mz_graphics_flush()
     SDL_GL_SwapBuffers();
 }
 
-void mz_graphics_draw_texture(GLuint texture)
+void mz_graphics_draw_texture(TEXTURE_ID texture_id)
 {
+    GLuint texture = mz_texture_bind_graphics(texture_id);
+
     glLoadIdentity();
 
     glBindTexture(GL_TEXTURE_2D, texture);
