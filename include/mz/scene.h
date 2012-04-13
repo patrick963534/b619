@@ -8,9 +8,14 @@
 
 typedef struct mz_scene_t
 {
-    extends_container();
+    extends_node();
 
 } mz_scene_t;
+
+#define extends_scene_vtable()  \
+    extends_node_vtable()       
+
+MZ_API mz_vtable_t* mz_get_scene_vtable();
 
 MZ_API mz_scene_t* mz_scene_new(size_t size, mz_node_t *parent);
 

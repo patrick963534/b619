@@ -7,8 +7,7 @@
 #include <mz/list.h>
 
 #define extends_container() \
-    extends_object();   \
-    list_t  children
+    extends_object()
 
 typedef struct mz_container_t
 {

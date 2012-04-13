@@ -50,10 +50,11 @@ SDL_Surface *mz_texture_bind_graphics(TEXTURE_ID id)
     {
         if (texture->id == id)
         {
-            logI("Found Texture Id: %d", id);
             return texture->surface;
         }
     }
+
+    logE("Can not find texture by texture ID: %d", id);
 
     return NULL;
 }

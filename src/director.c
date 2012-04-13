@@ -9,18 +9,13 @@
 #include "event.h"
 
 static int is_system_init;
-static mz_scene_t *scene_;
+static mz_scene_t *g_scene;
 
 static void director_render()
 {
-    mz_actor_t *actor;
-
     mz_graphics_clear();
 
-    list_for_each_entry(actor, &scene_->element_, mz_actor_t, element_) 
-    {
-        mz_graphics_draw_texture(actor->texture);
-    }
+    mz_node_vtable_draw((mz_node_t*)g_scene);
 
     mz_graphics_flush();
 }
@@ -54,6 +49,6 @@ MZ_API void mz_director_loop()
 
 MZ_API void mz_director_push(mz_scene_t *scene)
 {
-    scene_ = scene;
+    g_scene = scene;
 }
 
