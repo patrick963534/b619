@@ -8,9 +8,9 @@ typedef struct node_vtable_t
     extends_node_vtable();
 } node_vtable_t;
 
-static void draw(mz_node_t *self)
+static void draw(mz_node_t *self_)
 {
-
+    mz_unused(self_);
 }
 
 MZ_API mz_vtable_t* mz_get_node_vtable()
