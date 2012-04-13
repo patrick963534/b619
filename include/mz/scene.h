@@ -19,9 +19,9 @@ typedef struct mz_scene_t
 #define extends_scene_vtable()  \
     extends_node_vtable()       
 
-typedef void (*on_handler_)(mz_node_t *self_, mz_event_t *e) on_handler;
+typedef void (*on_handler)(mz_node_t *self_, mz_event_t *e);
 
-MZ_API void mz_scene_add_on_handler(mz_scene_t *self_, hz_node_t *target, on_handler on); 
+MZ_API void mz_scene_add_on_handler(mz_scene_t *self_, mz_node_t *target, on_handler on); 
 
 MZ_API mz_vtable_t* mz_scene_get_vtable();
 

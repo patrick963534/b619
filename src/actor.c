@@ -21,7 +21,7 @@ MZ_API mz_vtable_t* mz_actor_get_vtable()
 
     if (vtable.size == 0)
     {
-        mz_vtable_t *base_vtable = mz_get_node_vtable();
+        mz_vtable_t *base_vtable = mz_node_get_vtable();
         mz_memcpy(&vtable, base_vtable, base_vtable->size);
 
         vtable.draw = draw;
