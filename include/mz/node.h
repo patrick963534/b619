@@ -4,6 +4,7 @@
 #include <mz/object.h>
 #include <mz/libs.h>
 #include <mz/defs.h>
+#include <mz/event.h>
 
 typedef struct mz_node_t mz_node_t;
 
@@ -20,7 +21,9 @@ struct mz_node_t
 
 #define extends_node_vtable()   \
     extends_vtable();           \
-    void (*draw)(mz_node_t *self)
+    void (*step)(mz_node_t *self_, int ellapse);   \
+    int (*on)(mz_node_t *self_, mz_event_t *e);    \
+    void (*draw)(mz_node_t *self_)
 
 MZ_API mz_vtable_t* mz_get_node_vtable();
 

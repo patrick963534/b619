@@ -1,6 +1,7 @@
 #include <mz/scene.h>
 #include <mz/node.h>
 #include <mz/actor.h>
+#include <mz/event.h>
 
 typedef struct scene_vtable_t
 {
@@ -33,6 +34,7 @@ MZ_API mz_vtable_t* mz_get_scene_vtable()
 
     return (mz_vtable_t*)&vtable;
 }
+
 MZ_API mz_scene_t* mz_scene_new(size_t size, mz_node_t *parent)
 {
     mz_scene_t *v = (mz_scene_t*)mz_node_new(size, parent);
