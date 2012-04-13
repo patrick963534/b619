@@ -13,7 +13,7 @@ static void draw(mz_node_t *self_)
     mz_unused(self_);
 }
 
-MZ_API mz_vtable_t* mz_get_node_vtable()
+MZ_API mz_vtable_t* mz_node_get_vtable()
 {
     static node_vtable_t vtable;
     if (vtable.size == 0)
@@ -35,7 +35,7 @@ MZ_API void mz_node_vtable_draw(mz_node_t *self)
 MZ_API mz_node_t* mz_node_new(size_t size, mz_node_t *parent)
 {
     mz_node_t *v = (mz_node_t*)mz_container_new(size);
-    v->vtable = mz_get_node_vtable();
+    v->vtable = mz_node_get_vtable();
 
     if (parent)
         mz_node_add_child(parent, v);

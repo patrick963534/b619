@@ -25,7 +25,7 @@ struct mz_node_t
     int (*on)(mz_node_t *self_, mz_event_t *e);    \
     void (*draw)(mz_node_t *self_)
 
-MZ_API mz_vtable_t* mz_get_node_vtable();
+MZ_API mz_vtable_t* mz_node_get_vtable();
 
 MZ_API void mz_node_vtable_draw(mz_node_t *self);
 

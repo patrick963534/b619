@@ -15,7 +15,7 @@ static void draw(mz_node_t *self_)
     mz_graphics_draw_texture(self->texture);
 }
 
-MZ_API mz_vtable_t* mz_get_actor_vtable()
+MZ_API mz_vtable_t* mz_actor_get_vtable()
 {
     static actor_vtable_t vtable;
 
@@ -35,7 +35,7 @@ MZ_API mz_actor_t* mz_actor_new(const char *file, size_t size, mz_node_t *parent
 {
     mz_actor_t *v = (mz_actor_t*)mz_node_new(size, parent);
     v->texture = mz_texture_load(file);
-    v->vtable = mz_get_actor_vtable();
+    v->vtable = mz_actor_get_vtable();
 
     return v;
 }
