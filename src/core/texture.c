@@ -41,22 +41,21 @@ static SDL_Surface* load_image_with_alpha(const char *path)
     return IMG_Load(path);
 }
 
-GLuint mz_texture_bind_graphics(TEXTURE_ID id)
+SDL_Surface *mz_texture_bind_graphics(TEXTURE_ID id)
 {
-    GLuint t = 0;
-    texture_data_t *texture = temp_texture;
+    texture_data_t *manager = get_texture_manager();
+    texture_data_t *texture;
 
-	glGenTextures(1, &t);
-    logI("%d", (int)t);
-	glBindTexture(GL_TEXTURE_2D, t);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    list_for_each_entry(texture, &manager->element_, texture_data_t, element_)
+    {
+        if (texture->id == id)
+        {
+            logI("Found Texture Id: %d", id);
+            return texture->surface;
+        }
+    }
 
-	glTexImage2D(GL_TEXTURE_2D, 0, texture->surface->format->BytesPerPixel, texture->surface->w, 
-                                texture->surface->h, 0, texture->format, 
-                                GL_UNSIGNED_BYTE, texture->surface->pixels);
-
-    return t;
+    return NULL;
 }
 
 void mz_texture_delete(TEXTURE_ID id)
@@ -84,7 +83,7 @@ TEXTURE_ID mz_texture_load(const char *path)
     texture->filename = mz_strdup(path);
 
     INIT_LIST_HEAD(&texture->element_);
-    list_move_tail(&get_texture_manager()->element_, &texture->element_);
+    list_move_tail(&texture->element_, &get_texture_manager()->element_);
 
     temp_texture = texture;
 

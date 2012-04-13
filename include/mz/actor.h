@@ -9,6 +9,7 @@ typedef struct mz_actor_t_ mz_actor_t;
 
 #define extends_actor() \
     extends_node(); \
+    const char  *name;  \
     TEXTURE_ID  texture
 
 struct mz_actor_t_

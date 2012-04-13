@@ -2,6 +2,7 @@
 #include <mz/scene.h>
 #include <mz/defs.h>
 #include <mz/libs.h>
+#include <mz/actor.h>
 #include "core/system.h"
 #include "core/texture.h"
 #include "core/graphics.h"
@@ -12,8 +13,15 @@ static mz_scene_t *scene_;
 
 static void director_render()
 {
+    mz_actor_t *actor;
+
     mz_graphics_clear();
-    mz_graphics_draw_texture(0);
+
+    list_for_each_entry(actor, &scene_->element_, mz_actor_t, element_) 
+    {
+        mz_graphics_draw_texture(actor->texture);
+    }
+
     mz_graphics_flush();
 }
 

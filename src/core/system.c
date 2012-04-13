@@ -1,12 +1,11 @@
 #include "system.h"
 #include <SDL/SDL.h>
-#include <GL/glew.h>
 #include <mz/event.h>
 #include <mz/libs.h>
+#include "graphics.h"
 #include "util.c.h"
 
 static mz_system_t _system;
-static SDL_Surface *display_surface;
 
 static int get_timer_event(mz_event_t *event)
 {
@@ -58,29 +57,9 @@ static void wait_event(mz_event_t *event)
 	}
 }
 
-static void sdl_opengl_init()
-{
-	SDL_Init(SDL_INIT_EVERYTHING);
-
-    if((display_surface = SDL_SetVideoMode(640, 480, 32, 
-        SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL)) == NULL) {
-            return;
-    }
-
-    glClearColor(0, 0, 0, 0);
-    glViewport(0, 0, 640, 480);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, 640, 480, 0, 1, -1);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    glEnable(GL_TEXTURE_2D);
-}
-
 void mz_system_init()
 {
-	sdl_opengl_init();
+    mz_graphics_init();
 
 	_system.wait_event = wait_event;
 }
