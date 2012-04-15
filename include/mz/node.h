@@ -15,6 +15,8 @@ typedef void (*mz_draw_handler)(mz_node_t *self_);
 
 #define extends_node()  \
     extends_container();        \
+    int             x;          \
+    int             y;          \
     mz_node_t       *parent
 
 struct mz_node_t
@@ -31,6 +33,10 @@ struct mz_node_t
 MZ_API mz_vtable_t* mz_node_get_vtable();
 
 MZ_API void mz_node_vtable_draw(mz_node_t *self);
+
+MZ_API int mz_node_vtable_event(mz_node_t *self, mz_event_t *e);
+
+MZ_API void mz_node_vtable_step(mz_node_t *self, int ellapse);
 
 MZ_API mz_node_t* mz_node_new(size_t size, mz_node_t *parent);
 

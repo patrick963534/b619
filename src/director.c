@@ -22,7 +22,14 @@ static void director_render()
 
 static void director_update()
 {
-    logI("Update");
+    mz_node_vtable_step((mz_node_t*)g_scene, 0);
+}
+
+static void director_event(mz_event_t *e)
+{
+    // process filters first.
+
+    mz_node_vtable_event((mz_node_t*)g_scene, e);
 }
 
 MZ_API void mz_director_loop()
@@ -43,7 +50,8 @@ MZ_API void mz_director_loop()
 			director_update();
         else if (event.type == mz.events.KeyUp && event.keyboard.keycode == mz.keys.Escape)
 			break;
-		
+        else
+            director_event(&event);           
 	}
 }
 

@@ -17,7 +17,7 @@ static int get_update_event(mz_event_t *event)
     static Uint32 time = 0;
     Uint32 new_time = SDL_GetTicks();
 
-    if (new_time - time > 300) {
+    if (new_time - time > 30) {
         time = new_time;
         event->type = mz.events.UpdateFrame;
         return 1;

@@ -53,7 +53,7 @@ static GLuint get_pixel_format(SDL_Surface *surface)
     return format;
 }
 
-void mz_graphics_draw_texture(TEXTURE_ID texture_id)
+void mz_graphics_draw_texture(TEXTURE_ID texture_id, int x, int y, int w, int h)
 {
     SDL_Surface *surface = mz_texture_bind_graphics(texture_id);
 
@@ -65,17 +65,17 @@ void mz_graphics_draw_texture(TEXTURE_ID texture_id)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, surface->format->BytesPerPixel, 
-                                surface->w, surface->h, 
-                                0, get_pixel_format(surface),
-                                GL_UNSIGNED_BYTE, surface->pixels);
+            surface->w, surface->h, 
+            0, get_pixel_format(surface),
+            GL_UNSIGNED_BYTE, surface->pixels);
 
     glEnable (GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glBegin(GL_QUADS);
-        glTexCoord2i(0, 0); glVertex3i(0, 0, 0);
-        glTexCoord2i(1, 0); glVertex3i(256, 0, 0);
-        glTexCoord2i(1, 1); glVertex3i(256, 256, 0);
-        glTexCoord2i(0, 1); glVertex3i(0, 256, 0);
+        glTexCoord2f(0, 0); glVertex3i(x, y, 0);
+        glTexCoord2f(1, 0); glVertex3i(x + w, y, 0);
+        glTexCoord2f(1, 1); glVertex3i(x + w, y + h, 0);
+        glTexCoord2f(0, 1); glVertex3i(x, y + h, 0);
     glEnd();
 }

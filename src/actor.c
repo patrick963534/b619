@@ -12,7 +12,7 @@ static void draw(mz_node_t *self_)
 {
     mz_downcast(mz_actor_t);
 
-    mz_graphics_draw_texture(self->texture);
+    mz_graphics_draw_texture(self->texture, self->x, self->y, 512, 512);
 }
 
 MZ_API mz_vtable_t* mz_actor_get_vtable()

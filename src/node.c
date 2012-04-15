@@ -13,23 +13,31 @@ static void destruct(mz_object_t *self_)
 {
     mz_downcast(mz_node_t);
 
-
-
     self->vtable->base_type_vtable->destruct(self_);
 }
 
-static int event_on(mz_node_t *self_, mz_event_t *e)
+static int event_on(mz_node_t *self, mz_event_t *e)
 {
-    mz_unused(self_);
-    mz_unused(e);
+    mz_node_t *sub_node;
+
+    list_for_each_entry(sub_node, &self->children, mz_node_t, element)
+    {
+        if (mz_node_vtable_event(sub_node, e))
+            return 1;
+    }
+
 
     return 0;
 }
 
-static void step(mz_node_t *self_, int ellapse)
+static void step(mz_node_t *self, int ellapse)
 {
-    mz_unused(self_);
-    mz_unused(ellapse);
+    mz_node_t *sub_node;
+
+    list_for_each_entry(sub_node, &self->children, mz_node_t, element)
+    {
+        mz_node_vtable_step(sub_node, ellapse);
+    }
 }
 
 static void draw(mz_node_t *self_)
@@ -64,6 +72,23 @@ MZ_API void mz_node_vtable_draw(mz_node_t *self)
     }
 }
 
+MZ_API int mz_node_vtable_event(mz_node_t *self, mz_event_t *e)
+{
+    if (self->vtable->size >= mz_node_get_vtable()->size)
+    {
+        node_vtable_t *vtable = (node_vtable_t*)self->vtable;
+        vtable->event(self, e);
+    }
+}
+
+MZ_API void mz_node_vtable_step(mz_node_t *self, int ellapse)
+{
+    if (self->vtable->size >= mz_node_get_vtable()->size)
+    {
+        node_vtable_t *vtable = (node_vtable_t*)self->vtable;
+        vtable->step(self, ellapse);
+    }
+}
 MZ_API mz_node_t* mz_node_new(size_t size, mz_node_t *parent)
 {
     mz_node_t *v = (mz_node_t*)mz_container_new(size);
