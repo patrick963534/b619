@@ -13,7 +13,7 @@ static void draw(mz_node_t *self_)
     mz_downcast(mz_scene_t);
     mz_actor_t *actor;
 
-    list_for_each_entry(actor, &self->element_, mz_actor_t, element_) 
+    list_for_each_entry(actor, &self->children, mz_actor_t, element) 
     {
         mz_node_vtable_draw((mz_node_t*)actor);
     }
@@ -40,5 +40,9 @@ MZ_API mz_scene_t* mz_scene_new(size_t size, mz_node_t *parent)
     mz_scene_t *v = (mz_scene_t*)mz_node_new(size, parent);
     v->vtable = mz_scene_get_vtable();
 
+    INIT_LIST_HEAD(&v->event_handler_element);
+    INIT_LIST_HEAD(&v->step_handler_element);
+
     return v;
 }
+

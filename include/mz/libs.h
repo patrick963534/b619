@@ -11,6 +11,7 @@
 
 #define mz_memcpy(dst, src, size) memcpy(dst, src, size)
 #define mz_malloc(size) malloc(size)
+#define mz_free(obj) free(obj)
 
 #define mz_strdup(str) strdup(str)
 

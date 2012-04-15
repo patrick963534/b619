@@ -8,7 +8,9 @@
 #include <mz/container.h>
 
 #define extends_scene()     \
-    extends_node()
+    extends_node();         \
+    list_t event_handler_element;   \
+    list_t step_handler_element
 
 typedef struct mz_scene_t
 {
@@ -17,11 +19,11 @@ typedef struct mz_scene_t
 } mz_scene_t;
 
 #define extends_scene_vtable()  \
-    extends_node_vtable()       
+    extends_node_vtable()       \
 
-typedef void (*on_handler)(mz_node_t *self_, mz_event_t *e);
+MZ_API void mz_scene_process_event(mz_scene_t *self);
 
-MZ_API void mz_scene_add_on_handler(mz_scene_t *self_, mz_node_t *target, on_handler on); 
+MZ_API void mz_scene_process_event(mz_scene_t *self);
 
 MZ_API mz_vtable_t* mz_scene_get_vtable();
 

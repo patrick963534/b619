@@ -13,11 +13,6 @@ int main(int argc, char** argv)
     mz_actor_t *actor2 = mz_actor_new("/home/patrick/image/2.png", sizeof(*actor2), (mz_node_t*)scene);
     mz_actor_t *actor3 = mz_actor_new("/home/patrick/image/3.png", sizeof(*actor3), (mz_node_t*)scene);
 
-    actor1->name = "1st";
-    actor2->name = "2st";
-    actor3->name = "3st";
-    scene->name = "scene";
-
     mz_director_push(scene);
 	mz_director_loop();
 
