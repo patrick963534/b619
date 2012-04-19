@@ -6,6 +6,7 @@
 #include <mz/libs.h>
 #include <mz/event.h>
 #include <mz/event_node.h>
+
 static void step1(mz_node_t *self, int ellapse)
 {
     mz_unused(ellapse);
@@ -57,11 +58,11 @@ int main(int argc, char** argv)
 
     mz_event_node_t *ev1 = mz_event_node_new(sizeof(*ev1), (mz_node_t*)actor1);
     mz_event_node_t *ev2 = mz_event_node_new(sizeof(*ev2), (mz_node_t*)actor2);
-    //mz_event_node_t *ev3 = mz_event_node_new(sizeof(*ev3), (mz_node_t*)actor3);
+    mz_event_node_t *ev3 = mz_event_node_new(sizeof(*ev3), (mz_node_t*)actor3);
     ev1->event = on;
-    //ev1->step = step1;
-    //ev2->step = step2;
-    //ev3->step = step3;
+    ev1->step = step1;
+    ev2->step = step2;
+    ev3->step = step3;
 
     actor1->x = 250;
 
