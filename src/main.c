@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 
     mz_actor_t *actor1 = mz_actor_new("/home/patrick/image/1.png", sizeof(*actor1), (mz_node_t*)scene);
     mz_actor_t *actor2 = mz_actor_new("/home/patrick/image/2.png", sizeof(*actor2), (mz_node_t*)scene);
-    mz_actor_t *actor3 = mz_actor_new("/home/patrick/image/3.png", sizeof(*actor3), (mz_node_t*)scene);
+    mz_actor_t *actor3 = mz_actor_new("/home/patrick/image/31.png", sizeof(*actor3), (mz_node_t*)scene);
 
     mz_event_node_t *ev1 = mz_event_node_new(sizeof(*ev1), (mz_node_t*)actor1);
     mz_event_node_t *ev2 = mz_event_node_new(sizeof(*ev2), (mz_node_t*)actor2);

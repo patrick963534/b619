@@ -1,0 +1,342 @@
+****************************************************************************************************
+
+Poll函数简介  
+
+    poll()函数：这个函数是某些Unix系统提供的用于执行与select()函数同等功能的函数，下面是这个函数的声明：
+
+    #include <poll.h>
+
+    int poll(struct pollfd fds[], nfds_t nfds, int timeout)；
+
+    参数说明:
+
+    fds：是一个struct pollfd结构类型的数组，用于存放需要检测其状态的Socket描述符；每当调用这个函数之后，系统不会清空这个数组，操作起来比较方便；特别是对于socket连接比较多的情况下，在一定程度上可以提高处理的效率；这一点与select()函数不同，调用select()函数之后，select()函数会清空它所检测的socket描述符集合，导致每次调用select()之前都必须把socket描述符重新加入到待检测的集合中；因此，select()函数适合于只检测一个socket描述符的情况，而poll()函数适合于大量socket描述符的情况；
+
+    nfds：nfds_t类型的参数，用于标记数组fds中的结构体元素的总数量；
+
+    timeout：是poll函数调用阻塞的时间，单位：毫秒；
+
+    返回值:
+
+    >0：数组fds中准备好读、写或出错状态的那些socket描述符的总数量；
+
+    ==0：数组fds中没有任何socket描述符准备好读、写，或出错；此时poll超时，超时时间是timeout毫秒；换句话说，如果所检测的socket描述符上没有任何事件发生的话，那么poll()函数会阻塞timeout所指定的毫秒时间长度之后返回，如果timeout==0，那么poll() 函数立即返回而不阻塞，如果timeout==INFTIM，那么poll() 函数会一直阻塞下去，直到所检测的socket描述符上的感兴趣的事件发生是才返回，如果感兴趣的事件永远不发生，那么poll()就会永远阻塞下去；
+
+    -1：  poll函数调用失败，同时会自动设置全局变量errno；
+
+    如果待检测的socket描述符为负值，则对这个描述符的检测就会被忽略，也就是不会对成员变量events进行检测，在events上注册的事件也会被忽略，poll()函数返回的时候，会把成员变量revents设置为0，表示没有事件发生；
+
+    另外，poll() 函数不会受到socket描述符上的O_NDELAY标记和O_NONBLOCK标记的影响和制约，也就是说，不管socket是阻塞的还是非阻塞的，poll()函数都不会收到影响；而select()函数则不同，select()函数会受到O_NDELAY标记和O_NONBLOCK标记的影响，如果socket是阻塞的socket，则调用select()跟不调用select()时的效果是一样的，socket仍然是阻塞式TCP通讯，相反，如果socket是非阻塞的socket，那么调用select()时就可以实现非阻塞式TCP通讯；
+
+    所以poll() 函数的功能和返回值的含义与 select() 函数的功能和返回值的含义是完全一样的，两者之间的差别就是内部实现方式不一样，select()函数基本上可以在所有支持文件描述符操作的系统平台上运行(如：Linux 、Unix 、Windows、MacOS等)，可移植性好，而poll()函数则只有个别的的操作系统提供支持(如：SunOS、Solaris、AIX、HP提供支持，但是Linux不提供支持)，可移植性差；
+
+    strust pollfd结构说明：
+
+    typedef struct pollfd {
+            int fd;               /* 需要被检测或选择的文件描述符*/
+            short events;         /* 对文件描述符fd上感兴趣的事件 */
+            short revents;        /* 文件描述符fd上当前实际发生的事件*/
+    } pollfd_t;
+
+    typedef unsigned long   nfds_t;
+
+    经常检测的事件标记： 
+        POLLIN/POLLRDNORM(可读)、
+        POLLOUT/POLLWRNORM(可写)、
+        POLLERR(出错)
+
+    如果是对一个描述符上的多个事件感兴趣的话，可以把这些常量标记之间进行按位或运算就可以了；
+    比如：对socket描述符fd上的读、写、异常事件感兴趣，就可以这样做：struct pollfd  fds;
+    fds[nIndex].events=POLLIN | POLLOUT | POLLERR；
+    当 poll()函数返回时，要判断所检测的socket描述符上发生的事件，可以这样做： struct pollfd  fds;
+    检测可读TCP连接请求：
+        if((fds[nIndex].revents & POLLIN) == POLLIN){//接收数据/调用accept()接收连接请求}
+    检测可写：
+        if((fds[nIndex].revents & POLLOUT) == POLLOUT){//发送数据}
+    检测异常：
+        if((fds[nIndex].revents & POLLERR) == POLLERR){//异常处理}
+    
+
+
+****************************************************************************************************
+
+epoll示例代码:
+            (http://blog.csdn.net/hanchaoman/article/details/6181351)
+    - Server:
+        #include <iostream>
+        #include <sys/socket.h>
+        #include <sys/epoll.h>
+        #include <netinet/in.h>
+        #include <arpa/inet.h>
+        #include <fcntl.h>
+        #include <unistd.h>
+        #include <stdio.h>
+        #include <errno.h>
+
+        using namespace std;
+
+        #define MAXLINE 5
+        #define OPEN_MAX 100
+        #define LISTENQ 20
+        #define SERV_PORT 5000
+        #define INFTIM 1000
+
+        void setnonblocking(int sock)
+        {
+            int opts;
+            opts=fcntl(sock,F_GETFL);
+            if(opts<0)
+            {
+                perror("fcntl(sock,GETFL)");
+                exit(1);
+            }
+            opts = opts|O_NONBLOCK;
+            if(fcntl(sock,F_SETFL,opts)<0)
+            {
+                perror("fcntl(sock,SETFL,opts)");
+                exit(1);
+            }   
+        }
+
+        int main()
+        {
+            int i, maxi, listenfd, connfd, sockfd,epfd,nfds;
+            ssize_t n;
+            char line[MAXLINE];
+            socklen_t clilen;
+            //声明epoll_event结构体的变量,ev用于注册事件,数组用于回传要处理的事件
+            struct epoll_event ev,events[20];
+            //生成用于处理accept的epoll专用的文件描述符
+            epfd=epoll_create(256);
+            struct sockaddr_in clientaddr;
+            struct sockaddr_in serveraddr;
+            listenfd = socket(AF_INET, SOCK_STREAM, 0);
+            //把socket设置为非阻塞方式
+            //setnonblocking(listenfd);
+            //设置与要处理的事件相关的文件描述符
+            ev.data.fd=listenfd;
+            //设置要处理的事件类型
+            ev.events=EPOLLIN|EPOLLLT;
+            //ev.events=EPOLLIN;
+            //注册epoll事件
+            epoll_ctl(epfd,EPOLL_CTL_ADD,listenfd,&ev);
+            bzero(&serveraddr, sizeof(serveraddr));
+            serveraddr.sin_family = AF_INET;
+            char *local_addr="127.0.0.1";
+            inet_aton(local_addr,&(serveraddr.sin_addr));//htons(SERV_PORT);
+            serveraddr.sin_port=htons(SERV_PORT);
+            bind(listenfd,(sockaddr *)&serveraddr, sizeof(serveraddr));
+            listen(listenfd, LISTENQ);
+            maxi = 0;
+            for ( ; ; ) {
+                //等待epoll事件的发生
+                nfds=epoll_wait(epfd,events,20,500);
+                //处理所发生的所有事件     
+                for(i=0;i<nfds;++i)
+                {
+                    if(events[i].data.fd==listenfd)
+                    {
+                        connfd = accept(listenfd,(sockaddr *)&clientaddr, &clilen);
+                        if(connfd<0){
+                            perror("connfd<0");
+                            exit(1);
+                        }
+                        //setnonblocking(connfd);
+                        char *str = inet_ntoa(clientaddr.sin_addr);
+                        cout << "accapt a connection from " << str << endl;
+                        //设置用于读操作的文件描述符
+                        ev.data.fd=connfd;
+                        //设置用于注测的读操作事件
+                        ev.events=EPOLLIN|EPOLLLT;
+                        //ev.events=EPOLLIN;
+                        //注册ev
+                        epoll_ctl(epfd,EPOLL_CTL_ADD,connfd,&ev);
+                    }
+                    else if(events[i].events&EPOLLIN)
+                    {
+                        cout << "EPOLLIN" << endl;
+                        if ( (sockfd = events[i].data.fd) < 0) 
+                            continue;
+                        if ( (n = read(sockfd, line, MAXLINE)) < 0) {
+                            if (errno == ECONNRESET) {
+                                close(sockfd);
+                                events[i].data.fd = -1;
+                            } else
+                                std::cout<<"readline error"<<std::endl;
+                        } else if (n == 0) {
+                            close(sockfd);
+                            events[i].data.fd = -1;
+                        }
+                        line[n] = '/0';
+                        cout << "read " << line << endl;
+                        //设置用于写操作的文件描述符
+                        ev.data.fd=sockfd;
+                        //设置用于注测的写操作事件
+                        ev.events=EPOLLOUT|EPOLLLT;
+                        //修改sockfd上要处理的事件为EPOLLOUT
+                        //epoll_ctl(epfd,EPOLL_CTL_MOD,sockfd,&ev);
+                    }
+                    else if(events[i].events&EPOLLOUT)
+                    {   
+                        sockfd = events[i].data.fd;
+                        write(sockfd, line, n);
+                        //设置用于读操作的文件描述符
+                        ev.data.fd=sockfd;
+                        //设置用于注测的读操作事件
+                        ev.events=EPOLLIN|EPOLLLT;
+                        //修改sockfd上要处理的事件为EPOLIN
+                        epoll_ctl(epfd,EPOLL_CTL_MOD,sockfd,&ev);
+                    }
+                }
+            }
+            return 0;
+        }
+        
+
+****************************************************************************************************
+
+epoll的2种模式ET和LT
+
+    - epoll有两种模式,Edge Triggered(简称ET) 和 Level Triggered(简称LT).在采用这两种模式时要注意的是,如果采用ET模式,那么仅当状态发生变化时才会通知,而采用LT模式类似于原来的select/poll操作,只要还有没有处理的事件就会一直通知.
+
+    - 所以，对于我来说，应该都是使用LT模式。
+
+****************************************************************************************************
+
+network long值与IP地址字符串
+
+    - 将IP字符串转成network long值 (sockaddr_in.sin_addr用到)
+
+        int inet_aton(const char *cp, struct in_addr *inp);
+
+        inet_aton("127.0.0.1", &(server_addr.sin_addr));
+
+    - network long值转成IP字符串
+        char *str = inet_ntoa(clientaddr.sin_addr);
+
+****************************************************************************************************
+
+如何设置socket为非阻塞
+
+    void setnonblocking(int sock)
+    {
+        int opts;
+        opts=fcntl(sock,F_GETFL);
+        if(opts<0)
+        {
+            perror("fcntl(sock,GETFL)");
+            exit(1);
+        }
+        opts = opts|O_NONBLOCK;
+        if(fcntl(sock,F_SETFL,opts)<0)
+        {
+            perror("fcntl(sock,SETFL,opts)");
+            exit(1);
+        }   
+    }
+
+****************************************************************************************************
+
+epoll比较于poll和select的优点:
+
+    1.支持一个进程打开大数目的socket描述符(FD)
+        select 最不能忍受的是一个进程所打开的FD是有一定限制的，由FD_SETSIZE设置，默认值是2048。对于那些需要支持的上万连接数目的IM服务器来说显然太少了。这时候你一是可以选择修改这个宏然后重新编译内核，不过资料也同时指出这样会带来网络效率的下降，二是可以选择多进程的解决方案(传统的 Apache方案)，不过虽然linux上面创建进程的代价比较小，但仍旧是不可忽视的，加上进程间数据同步远比不上线程间同步的高效，所以也不是一种完美的方案。不过 epoll则没有这个限制，它所支持的FD上限是最大可以打开文件的数目，这个数字一般远大于2048,举个例子,在1GB内存的机器上大约是10万左右，具体数目可以cat /proc/sys/fs/file-max察看,一般来说这个数目和系统内存关系很大。
+
+    2.IO效率不随FD数目增加而线性下降
+        传统的select/poll另一个致命弱点就是当你拥有一个很大的socket集合，不过由于网络延时，任一时间只有部分的socket是"活跃"的，但是select/poll每次调用都会线性扫描全部的集合，导致效率呈现线性下降。但是epoll不存在这个问题，它只会对"活跃"的socket进行操作---这是因为在内核实现中epoll是根据每个fd上面的callback函数实现的。那么，只有"活跃"的socket才会主动的去调用 callback函数，其他idle状态socket则不会，在这点上，epoll实现了一个"伪"AIO，因为这时候推动力在os内核。在一些 benchmark中，如果所有的socket基本上都是活跃的---比如一个高速LAN环境，epoll并不比select/poll有什么效率，相反，如果过多使用epoll_ctl,效率相比还有稍微的下降。但是一旦使用idle connections模拟WAN环境,epoll的效率就远在select/poll之上了。
+
+    3.使用mmap加速内核与用户空间的消息传递。
+        这点实际上涉及到epoll的具体实现了。无论是select,poll还是epoll都需要内核把FD消息通知给用户空间，如何避免不必要的内存拷贝就很重要，在这点上，epoll是通过内核于用户空间mmap同一块内存实现的。而如果你想我一样从2.5内核就关注epoll的话，一定不会忘记手工 mmap这一步的。
+    
+****************************************************************************************************
+
+linux socket basic client sample (work with the following server sample.)
+
+    #include <sys/types.h>
+    #include <netinet/in.h>
+    #include <unistd.h>
+    #include <netdb.h>
+    #include "defs.h"
+    #include "libs.h"
+    #include "string.h"
+        
+    int main(int argc, char **argv)
+    {
+        int sockfd;
+        char buf[256];
+        int length;
+        struct sockaddr_in server_addr = {AF_INET, htons(2233), htonl(0x7f000001)};
+        if (-1 == (sockfd = socket(AF_INET, SOCK_STREAM, 0)))
+            goto error;
+        if (-1 == connect(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr)))
+            goto error;
+
+        if (-1 == length = recv(sockfd, buf, sizeof(buf), 0))
+            goto error;
+
+        buf[length] = '\0';
+        printf("Get message from server: %s\r\n", buf);
+
+        return 0;
+
+    error:
+        printf("there's error. \r\n");
+        return 1;
+    }
+
+
+****************************************************************************************************
+
+linux socket basic server sample
+
+    #include <stdio.h>
+    #include <sys/socket.h>
+    #include <sys/types.h>
+    #include <netinet/in.h>
+    #include <unistd.h>
+    #include <netdb.h>
+    #include "defs.h"
+    #include "libs.h"
+    #include "string.h"
+        
+    int main(int argc, char **argv)
+    {
+        int sockfd;
+        struct sockaddr_in addr = {AF_INET, htons(2233), htonl(0)};
+
+        memset(&addr.sin_zero, 0, 8);
+
+        if (-1 == (sockfd = socket(AF_INET, SOCK_STREAM, 0))) 
+            goto error;
+        if (-1 == bind(sockfd, (struct sockaddr*)&addr, sizeof(addr)))
+            goto error;
+        if (-1 == listen(sockfd, 10))
+            goto error;
+
+        while (1) {
+            int new_sockfd = accept(sockfd, NULL, NULL);
+            char msg[20] = "Server: Hi.";
+            send(new_sockfd, msg, strlen(msg), 0);
+            close(new_sockfd);
+        }
+
+        close(sockfd);
+        return 0;
+
+    error:
+        printf("there's error.\r\n");
+        return 1;
+    }
+
+****************************************************************************************************
+
+linux socket APIs
+
+    - in sys/socket.h file
+        int socket(int domain, int type, int protocol);
+        int bind(int socket, const struct sockaddr *address, socklen_t address_len);
+        int listen(int socket, int backlog);
+        int accept(int socket, struct sockaddr *restrict address, socklen_t *restrict address_len);
+        int connect(int socket, const struct sockaddr *address, socklen_t address_len);
+        
+
