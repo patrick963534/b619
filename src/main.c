@@ -64,7 +64,7 @@ int main(int argc, char** argv)
     ev2->step = step2;
     ev3->step = step3;
 
-    actor1->x = 250;
+    //actor1->x = 250;
 
     mz_director_push(scene);
 	mz_director_loop();

@@ -17,10 +17,10 @@ struct mz_vtable_t
 };
 
 #define extends_object()    \
-    int     is_in_heap_;    \
-    int     is_destructed_; \
+    int             is_in_heap_;    \
+    int             is_destructed_; \
     mz_vtable_t     *vtable;    \
-    list_t  element
+    list_t          element
 
 typedef struct mz_object_t
 {
