@@ -16,6 +16,7 @@ static void step1(mz_node_t *self, int ellapse)
 
     self->x += 5;
 }
+
 static void step2(mz_node_t *self, int ellapse)
 {
     mz_unused(ellapse);
@@ -25,6 +26,7 @@ static void step2(mz_node_t *self, int ellapse)
 
     self->x += 15;
 }
+
 static void step3(mz_node_t *self, int ellapse)
 {
     mz_unused(ellapse);
