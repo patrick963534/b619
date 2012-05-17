@@ -22,4 +22,6 @@ MZ_API void mz_container_add(mz_container_t *container, mz_object_t *object);
 
 MZ_API void mz_container_remove(mz_object_t *object);
 
+MZ_API void destruct(mz_object_t *self_);
+
 #endif

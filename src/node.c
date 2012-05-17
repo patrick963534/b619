@@ -44,12 +44,19 @@ void mz_node_draw(mz_node_t *self)
     }
 }
 
+MZ_API void mz_node_destruct(mz_object_t* self_)
+{
+    mz_object_destruct(self_);
+}
+
 MZ_API mz_node_t* mz_node_new(size_t size, mz_node_t *parent)
 {
     mz_node_t *v = (mz_node_t*)mz_container_new(size);
 
     if (parent)
         mz_node_add_child(parent, v);
+
+    v->destruct = mz_node_destruct;
 
     return v;
 }

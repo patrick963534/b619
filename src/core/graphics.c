@@ -1,7 +1,7 @@
 #include <SDL/SDL.h>
 #include <GL/glew.h>
 #include <mz/libs.h>
-#include "texture.h"
+#include <mz/image.h>
 
 static SDL_Surface *display_surface;
 static GLuint gl_texture;
@@ -19,18 +19,21 @@ void mz_graphics_flush()
 
 void mz_graphics_init()
 {
+    int width = 320;
+    int height = 240;
+
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-    if((display_surface = SDL_SetVideoMode(640, 480, 32, 
+    if((display_surface = SDL_SetVideoMode(width, height, 32, 
         SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL)) == NULL) {
             return;
     }
 
     glClearColor(0, 0, 0, 0);
-    glViewport(0, 0, 640, 480);
+    glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0, 640, 480, 0, 1, -1);
+    glOrtho(0, width, height, 0, 1, -1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
@@ -53,10 +56,8 @@ static GLuint get_pixel_format(SDL_Surface *surface)
     return format;
 }
 
-void mz_graphics_draw_texture(TEXTURE_ID texture_id, int x, int y, int w, int h)
+void mz_graphics_draw_texture(mz_image_t *image, int x, int y, int w, int h)
 {
-    SDL_Surface *surface = mz_texture_bind_graphics(texture_id);
-
     glLoadIdentity();
 
     glBindTexture(GL_TEXTURE_2D, gl_texture);
@@ -64,10 +65,10 @@ void mz_graphics_draw_texture(TEXTURE_ID texture_id, int x, int y, int w, int h)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, surface->format->BytesPerPixel, 
-            surface->w, surface->h, 
-            0, get_pixel_format(surface),
-            GL_UNSIGNED_BYTE, surface->pixels);
+	glTexImage2D(GL_TEXTURE_2D, 0, image->bytes_per_pixel, 
+            image->w, image->h, 
+            0, image->format,
+            GL_UNSIGNED_BYTE, image->pixels);
 
     glEnable (GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

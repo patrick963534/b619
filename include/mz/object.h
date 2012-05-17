@@ -21,4 +21,6 @@ MZ_API void mz_object_delete(mz_object_t *obj);
 
 MZ_API mz_object_t* mz_object_new(size_t size);
 
+MZ_API void mz_object_destruct(mz_object_t *self_);
+
 #endif

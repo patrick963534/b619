@@ -4,7 +4,7 @@
 #include <mz/defs.h>
 #include <mz/libs.h>
 
-static void destruct(mz_object_t *self_)
+MZ_API void destruct(mz_object_t *self_)
 {
     mz_downcast(mz_container_t);
     mz_object_t *sub_node;
@@ -13,6 +13,8 @@ static void destruct(mz_object_t *self_)
     {
         mz_object_delete(sub_node);
     }
+
+    mz_object_destruct(self_);
 }
 
 MZ_API mz_container_t* mz_container_new(size_t size)

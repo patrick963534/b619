@@ -49,7 +49,7 @@ static int on(mz_node_t *self, mz_event_t *e)
     return 0;
 }
 
-int main(int argc, char** argv)
+mz_scene_t* mz_main()
 {
     mz_scene_t *scene = mz_scene_new(sizeof(*scene), NULL);
 
@@ -64,11 +64,5 @@ int main(int argc, char** argv)
 
     actor1->x = 250;
 
-    mz_director_push(scene);
-	mz_director_loop();
-
-    mz_unused(argc);
-    mz_unused(argv);
-
-	return 0;
+	return scene;
 }
