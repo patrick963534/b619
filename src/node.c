@@ -4,95 +4,49 @@
 #include <mz/libs.h>
 #include <mz/event.h>
 
-typedef struct node_vtable_t
-{
-    extends_node_vtable();
-} node_vtable_t;
-
-static void destruct(mz_object_t *self_)
-{
-    mz_downcast(mz_node_t);
-
-    self->vtable->base_type_vtable->destruct(self_);
-}
-
-static int event_on(mz_node_t *self, mz_event_t *e)
+int mz_node_on(mz_node_t *self, mz_event_t *e)
 {
     mz_node_t *sub_node;
 
+    if (self->on && self->on(self, e))
+        return 1;
+
     list_for_each_entry(sub_node, &self->children, mz_node_t, element)
     {
-        if (mz_node_vtable_event(sub_node, e))
+        if (mz_node_on(sub_node, e))
             return 1;
     }
-
 
     return 0;
 }
 
-static void step(mz_node_t *self, int ellapse)
+void mz_node_step(mz_node_t *self, int ellapse)
 {
     mz_node_t *sub_node;
 
+    if (self->step)
+        self->step(self, ellapse);
+
     list_for_each_entry(sub_node, &self->children, mz_node_t, element)
     {
-        mz_node_vtable_step(sub_node, ellapse);
+        mz_node_step(sub_node, ellapse);
     }
 }
 
-static void draw(mz_node_t *self_)
+void mz_node_draw(mz_node_t *self)
 {
-    mz_unused(self_);
-}
+    mz_node_t *node;
 
-MZ_API mz_vtable_t* mz_node_get_vtable()
-{
-    static node_vtable_t vtable;
-    if (vtable.size == 0)
+    list_for_each_entry(node, &self->children, mz_node_t, element) 
     {
-        vtable.base_type_vtable = mz_object_get_vtable();
-        mz_memcpy(&vtable, vtable.base_type_vtable, vtable.base_type_vtable->size);
-
-        vtable.draw = draw;
-        vtable.step = step;
-        vtable.event = event_on;
-        vtable.destruct = destruct;
-        vtable.size = sizeof(vtable);
-    }
-
-    return (mz_vtable_t*)&vtable;
-}
-
-MZ_API void mz_node_vtable_draw(mz_node_t *self)
-{
-    if (self->vtable->size >= mz_node_get_vtable()->size)
-    {
-        node_vtable_t *vtable = (node_vtable_t*)self->vtable;
-        vtable->draw(self);
+        if (node->draw)
+            node->draw(node);
     }
 }
 
-MZ_API int mz_node_vtable_event(mz_node_t *self, mz_event_t *e)
-{
-    if (self->vtable->size >= mz_node_get_vtable()->size)
-    {
-        node_vtable_t *vtable = (node_vtable_t*)self->vtable;
-        vtable->event(self, e);
-    }
-}
-
-MZ_API void mz_node_vtable_step(mz_node_t *self, int ellapse)
-{
-    if (self->vtable->size >= mz_node_get_vtable()->size)
-    {
-        node_vtable_t *vtable = (node_vtable_t*)self->vtable;
-        vtable->step(self, ellapse);
-    }
-}
 MZ_API mz_node_t* mz_node_new(size_t size, mz_node_t *parent)
 {
     mz_node_t *v = (mz_node_t*)mz_container_new(size);
-    v->vtable = mz_node_get_vtable();
 
     if (parent)
         mz_node_add_child(parent, v);

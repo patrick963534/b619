@@ -15,21 +15,21 @@ static void director_render()
 {
     mz_graphics_clear();
 
-    mz_node_vtable_draw((mz_node_t*)g_scene);
+    mz_node_draw((mz_node_t*)g_scene);
 
     mz_graphics_flush();
 }
 
 static void director_update()
 {
-    mz_node_vtable_step((mz_node_t*)g_scene, 0);
+    mz_node_step((mz_node_t*)g_scene, 0);
 }
 
 static void director_event(mz_event_t *e)
 {
     // process filters first.
 
-    mz_node_vtable_event((mz_node_t*)g_scene, e);
+    mz_node_on((mz_node_t*)g_scene, e);
 }
 
 MZ_API void mz_director_loop()
