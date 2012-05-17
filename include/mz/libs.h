@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
+#include <assert.h>
 #include <mz/defs.h>
 
 #define mz_unused(arg) (void)(arg)
@@ -12,6 +13,7 @@
 #define mz_memcpy(dst, src, size) memcpy(dst, src, size)
 #define mz_malloc(size) calloc(1, size)
 #define mz_free(obj) free(obj)
+#define mz_assert(v) assert(v)
 
 #define mz_strdup(str) strdup(str)
 

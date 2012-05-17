@@ -5,11 +5,13 @@
 #include <mz/node.h>
 #include <mz/defs.h>
 #include <mz/image.h>
+#include <mz/animation.h>
 
 typedef struct mz_actor_t mz_actor_t;
 
 #define extends_actor() \
-    extends_node(); \
+    extends_node();             \
+    mz_animation_t *animation;  \
     mz_image_t *image
 
 struct mz_actor_t

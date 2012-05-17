@@ -11,6 +11,7 @@ typedef struct mz_director_t
     mz_scene_t* scene_stack[MAX_SCENE_COUNT];
     int         cur_scene_id;
     mz_scene_t* cur_scene;
+    mz_scene_t* next_scene;
 } mz_director_t;
 
 MZ_API mz_scene_t* mz_main();

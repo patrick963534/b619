@@ -5,6 +5,7 @@
 #include <mz/scene.h>
 #include <mz/libs.h>
 #include <mz/event.h>
+#include <mz/animation.h>
 
 static void step1(mz_node_t *self, int ellapse)
 {
@@ -51,6 +52,8 @@ static int on(mz_node_t *self, mz_event_t *e)
 
 mz_scene_t* mz_main()
 {
+
+    mz_animation_t *animation = mz_animation_load("/home/patrick/pluto/project/libmz/res/animation/basic.xml");
     mz_scene_t *scene = mz_scene_new(sizeof(*scene), NULL);
 
     mz_actor_t *actor1 = mz_actor_new("/home/patrick/image/1.png", sizeof(*actor1), (mz_node_t*)scene);

@@ -8,7 +8,7 @@
 
 static int is_power_of_2(int v)
 {
-    return (((v) & ((v) - 1)) != 0);
+    return (v & (v - 1)) == 0;
 }
 
 static SDL_Surface* load_image_with_alpha(const char *path)
@@ -35,7 +35,7 @@ mz_image_t* mz_image_load(const char *path)
     mz_image_t *image = mz_malloc(sizeof(*image));
 	SDL_Surface *surface = load_image_with_alpha(path); 
 
-    if (is_power_of_2(surface->w) || is_power_of_2(surface->h)) 
+    if (!is_power_of_2(surface->w) || !is_power_of_2(surface->h)) 
 		goto error;
 
 	if(surface->format->BytesPerPixel == 4)
@@ -46,11 +46,11 @@ mz_image_t* mz_image_load(const char *path)
 		goto error;
 
     image->destruct = mz_image_destruct;
+
     image->filename = mz_strdup(path);
     image->w = surface->w;
     image->h = surface->h;
     image->bytes_per_pixel = surface->format->BytesPerPixel;
-
     image->pixel_bytes_count = image->bytes_per_pixel * image->w * image->h;
     image->pixels = mz_malloc(image->pixel_bytes_count);
     mz_memcpy(image->pixels, surface->pixels, image->pixel_bytes_count);
