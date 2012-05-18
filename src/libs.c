@@ -12,7 +12,7 @@ MZ_API void print_log(const char *type, const char *format, ...)
     vsnprintf(buf, sizeof(buf), format, va);
     va_end(va);
 
-    printf("%s: %s\r\n", type, buf);
+    printf("[%s] %s\r\n", type, buf);
     fflush(stdout);
 }
 
@@ -24,7 +24,7 @@ MZ_API int mz_atoi(const char *v, int def)
     return atoi(v);
 }
 
-MZ_API int mz_strequal(const char *str1, const char* str2)
+MZ_API int mz_strequal(const char *str1, const char *str2)
 {
     return strcmp(str1, str2) == 0;
 }

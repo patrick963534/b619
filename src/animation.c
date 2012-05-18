@@ -277,6 +277,8 @@ static void generate_one_ani_file(animation_set_tag_t *set, const char *anim_nam
     logI("image count -> %d", image_count);
     for (i = 0; i < image_count; i++)
         logI("image file -> %s", images[i]);
+
+
 }
 
 MZ_API int mz_animation_generate_ani_file(const char *xml_file, const char *dst_folder)

@@ -4,13 +4,21 @@
 #include <mz/defs.h>
 #include <mz/image.h>
 
-typedef struct mz_frame_t
+typedef struct mz_pattern_t
 {
     int     x;
     int     y;
-    int     w;
-    int     h;
-    int     duration;
+    int     image_id;
+
+} mz_pattern_t;
+
+typedef struct mz_frame_t
+{
+    mz_pattern_t    **patterns;
+    int             npattern;
+
+    int             duration;
+
 } mz_frame_t;
 
 typedef struct mz_sequence_t
