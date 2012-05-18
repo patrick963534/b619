@@ -9,34 +9,25 @@
 
 typedef struct mz_node_t mz_node_t;
 
-typedef int (*mz_event_handler)(mz_node_t *self_, mz_event_t *e);
-typedef void (*mz_step_handler)(mz_node_t *self_, int ellapse);
-typedef void (*mz_draw_handler)(mz_node_t *self_);
-
 #define extends_node()  \
     extends_container();        \
-    int             x;          \
-    int             y;          \
-    mz_node_t       *parent
+    int         x;          \
+    int         y;          \
+    int         (*on)(mz_node_t *self_, mz_event_t *e);     \
+    void        (*draw)(mz_node_t *self_);                    \
+    void        (*step)(mz_node_t *self_, int ellapse);       \
+    mz_node_t   *parent
 
 struct mz_node_t
 {
     extends_node();
 };
 
-#define extends_node_vtable()   \
-    extends_vtable();           \
-    mz_draw_handler    draw;          \
-    mz_event_handler   event;        \
-    mz_step_handler    step
+MZ_API void mz_node_draw(mz_node_t *node);
 
-MZ_API mz_vtable_t* mz_node_get_vtable();
+MZ_API int mz_node_on(mz_node_t *node, mz_event_t *e);
 
-MZ_API void mz_node_vtable_draw(mz_node_t *self);
-
-MZ_API int mz_node_vtable_event(mz_node_t *self, mz_event_t *e);
-
-MZ_API void mz_node_vtable_step(mz_node_t *self, int ellapse);
+MZ_API void mz_node_step(mz_node_t *node, int ellapse);
 
 MZ_API mz_node_t* mz_node_new(size_t size, mz_node_t *parent);
 

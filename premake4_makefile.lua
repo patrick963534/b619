@@ -15,8 +15,8 @@ solution "libmz"
       location ( "build" )
       targetdir ( "bin" )
       libdirs { "/usr/lib" }
-      links { "SDL", "SDL_image", "GLEW", "GL" }
-      includedirs { "/usr/include", "include" }
+      links { "SDL", "SDL_image", "GLEW", "GL", "xml2" }
+      includedirs { "/usr/include", "include", "/usr/include/libxml2" }
       files { "include/*.h", "src/**.h", "src/**.c" }
  
       configuration "Debug"

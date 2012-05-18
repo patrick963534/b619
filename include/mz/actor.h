@@ -4,23 +4,23 @@
 #include <mz/object.h>
 #include <mz/node.h>
 #include <mz/defs.h>
+#include <mz/image.h>
+#include <mz/animation.h>
 
-typedef struct mz_actor_t_ mz_actor_t;
+typedef struct mz_actor_t mz_actor_t;
 
 #define extends_actor() \
-    extends_node(); \
-    TEXTURE_ID  texture
+    extends_node();             \
+    mz_animation_t *animation;  \
+    mz_image_t *image
 
-struct mz_actor_t_
+struct mz_actor_t
 {
     extends_actor();
 };
 
-#define extends_actor_vtable()  \
-    extends_node_vtable()       
-
-MZ_API mz_vtable_t* mz_actor_get_vtable();
-
 MZ_API mz_actor_t* mz_actor_new(const char *file, size_t size, mz_node_t *parent);
+
+MZ_API void mz_actor_destruct(mz_object_t* self_);
 
 #endif
