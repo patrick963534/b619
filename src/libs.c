@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 
-MZ_API void print_log(const char *type, const char *format, ...)
+MZ_API void mz_print_log(const char *type, const char *format, ...)
 {
     char buf[256];
     va_list va;
@@ -32,4 +32,9 @@ MZ_API int mz_strequal(const char *str1, const char *str2)
 MZ_API char* mz_strtrim(char *str, const char *delimit)
 {
     return str;
+}
+
+MZ_API int mz_is_power_of_2(int v)
+{
+    return (v & (v - 1)) == 0;
 }

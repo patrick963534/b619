@@ -56,6 +56,13 @@ static GLuint get_pixel_format(SDL_Surface *surface)
     return format;
 }
 
+static void generate_power_of_2_image(mz_image_t *src_image, int x, int y, int w, int h, mz_image_t *ret_image)
+{
+    int p2_w = (mz_is_power_of_2(w)) ? w : (w / 2 * 2);
+    int p2_h;
+
+}
+
 void mz_graphics_draw_texture(mz_image_t *image, int x, int y, int w, int h)
 {
     glLoadIdentity();
@@ -66,17 +73,17 @@ void mz_graphics_draw_texture(mz_image_t *image, int x, int y, int w, int h)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, image->bytes_per_pixel, 
-            image->w, image->h, 
-            0, image->format,
-            GL_UNSIGNED_BYTE, image->pixels);
+                                   image->w, image->h, 
+                                   0, image->format,
+                                   GL_UNSIGNED_BYTE, image->pixels);
 
     glEnable (GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glBegin(GL_QUADS);
-        glTexCoord2f(0, 0); glVertex3i(x, y, 0);
-        glTexCoord2f(1, 0); glVertex3i(x + w, y, 0);
+        glTexCoord2f(0, 0); glVertex3i(x,     y,     0);
+        glTexCoord2f(1, 0); glVertex3i(x + w, y,     0);
         glTexCoord2f(1, 1); glVertex3i(x + w, y + h, 0);
-        glTexCoord2f(0, 1); glVertex3i(x, y + h, 0);
+        glTexCoord2f(0, 1); glVertex3i(x,     y + h, 0);
     glEnd();
 }

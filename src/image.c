@@ -6,11 +6,6 @@
 #include <mz/image.h>
 #include <mz/object.h>
 
-static int is_power_of_2(int v)
-{
-    return (v & (v - 1)) == 0;
-}
-
 static SDL_Surface* load_image_with_alpha(const char *path)
 {
 	//SDL_Surface *temp = IMG_Load(path);
@@ -35,7 +30,7 @@ mz_image_t* mz_image_load(const char *path)
     mz_image_t *image = mz_malloc(sizeof(*image));
 	SDL_Surface *surface = load_image_with_alpha(path); 
 
-    if (!is_power_of_2(surface->w) || !is_power_of_2(surface->h)) 
+    if (!mz_is_power_of_2(surface->w) || !mz_is_power_of_2(surface->h)) 
 		goto error;
 
 	if(surface->format->BytesPerPixel == 4)
