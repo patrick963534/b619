@@ -1,5 +1,6 @@
 #include <mz/libs.h>
 #include <stdarg.h>
+#include <string.h>
 #include <stdio.h>
 
 MZ_API void print_log(const char *type, const char *format, ...)
@@ -13,4 +14,12 @@ MZ_API void print_log(const char *type, const char *format, ...)
 
     printf("%s: %s\r\n", type, buf);
     fflush(stdout);
+}
+
+MZ_API int mz_atoi(const char *v, int def)
+{
+    if (!v)
+        return def;
+
+    return atoi(v);
 }

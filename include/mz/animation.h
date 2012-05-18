@@ -3,6 +3,13 @@
 
 #include <mz/defs.h>
 
+typedef struct mz_image_tag_t
+{
+    char*   filepath;
+    int     origin_x;
+    int     origin_y;
+} mz_image_tag_t;
+
 typedef struct mz_frame_t
 {
     int     x;
@@ -10,7 +17,10 @@ typedef struct mz_frame_t
     int     w;
     int     h;
 
-    float   duration;
+    int     duration;
+
+    mz_image_tag_t  **images;
+    int             nimage;
 
 } mz_frame_t;
 

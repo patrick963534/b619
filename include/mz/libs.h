@@ -12,11 +12,13 @@
 
 #define mz_memcpy(dst, src, size) memcpy(dst, src, size)
 #define mz_malloc(size) calloc(1, size)
+#define mz_realloc(ptr, size) realloc(ptr, size)
 #define mz_free(obj) free(obj)
 #define mz_assert(v) assert(v)
 
 #define mz_strdup(str) strdup(str)
 
+MZ_API int mz_atoi(const char* value, int def);
 MZ_API void print_log(const char *type, const char *format, ...);
 
 #define logI(args...) print_log("Info", args) 

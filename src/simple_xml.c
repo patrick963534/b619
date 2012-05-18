@@ -67,7 +67,62 @@ MZ_API void mz_xml_delete(mz_xml_t *xml)
     xmlFreeParserCtxt((xmlParserCtxtPtr)xml->ctxt);
 }
 
-MZ_API const char* mz_xml_node_name(mz_xml_node_t node)
+MZ_API char* mz_xml_node_name(mz_xml_node_t node)
 {
-    return (const char*)((xmlNodePtr)node)->name;
+    const xmlChar *tag = (const char*)((xmlNodePtr)node)->name;
+    char *result;
+
+    if (!tag)
+        return NULL;
+
+    result = mz_strdup(tag);
+
+    return result;
+}
+
+MZ_API char* mz_xml_node_attribute(mz_xml_node_t node, const char *attribute_name)
+{
+    xmlChar *attr = xmlGetProp((xmlNodePtr)node, attribute_name);
+    char *result;
+
+    if (!attr)
+        return NULL;
+    
+    result = mz_strdup((const char*)attr);
+
+    xmlFree(attr);
+
+    return result;
+}
+
+MZ_API char* mz_xml_node_value(mz_xml_node_t node)
+{
+    xmlChar *attr = xmlNodeGetContent((xmlNodePtr)node);
+    char *result;
+
+    if (!attr)
+        return NULL;
+    
+    result = mz_strdup((const char*)attr);
+
+    xmlFree(attr);
+
+    return result;
+
+}
+MZ_API mz_xml_node_t mz_xml_find_next_node(mz_xml_node_t node, const char *tag)
+{
+    assert(node);
+
+    node = mz_xml_next_node(node);
+
+    while (node)
+    {
+        if (mz_xml_is_tag(node, tag))
+            return node;
+
+        node = mz_xml_next_node(node);
+    }
+
+    return NULL;
 }
