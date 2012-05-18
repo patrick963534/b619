@@ -23,6 +23,7 @@
 
 MZ_API int      mz_atoi(const char *value, int def);
 MZ_API char*    mz_strtrim(char *str, const char *delimit);
+MZ_API int      mz_strequal(const char *str1, const char *str2);
 MZ_API void     print_log(const char *type, const char *format, ...);
 
 #define logI(args...) print_log("Info", args) 

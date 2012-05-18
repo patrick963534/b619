@@ -24,6 +24,11 @@ MZ_API int mz_atoi(const char *v, int def)
     return atoi(v);
 }
 
+MZ_API int mz_strequal(const char *str1, const char* str2)
+{
+    return strcmp(str1, str2) == 0;
+}
+
 MZ_API char* mz_strtrim(char *str, const char *delimit)
 {
     return str;

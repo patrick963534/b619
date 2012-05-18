@@ -203,7 +203,7 @@ static int is_exist(const char **names, int count, const char *target)
     int i;
 
     for (i = 0; i < count; i++)
-        if (mz_strcmp(names[i], target) == 0)
+        if (mz_strequal(names[i], target))
             return 1;
 
     return 0;
@@ -239,10 +239,8 @@ static void generate_one_ani_file(animation_set_tag_t *set, const char *anim_nam
     for (i = 0; i < set->nanimation; i++) {
         animation_tag_t *anim = set->animations[i];
 
-        if (mz_strcmp(anim->name, anim_name) != 0)
+        if (!mz_strequal(anim->name, anim_name))
             continue;
-
-        logI("src->%s --- dst->%s", anim->name, anim_name);
 
         for (j = 0; j < anim->nframe; j++) {
             frame_tag_t *frame = anim->frames[j];
