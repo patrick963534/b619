@@ -23,3 +23,8 @@ MZ_API int mz_atoi(const char *v, int def)
 
     return atoi(v);
 }
+
+MZ_API char* mz_strtrim(char *str, const char *delimit)
+{
+    return str;
+}

@@ -2,13 +2,7 @@
 #define __MZ_ANIMATION_H__
 
 #include <mz/defs.h>
-
-typedef struct mz_image_tag_t
-{
-    char*   filepath;
-    int     origin_x;
-    int     origin_y;
-} mz_image_tag_t;
+#include <mz/image.h>
 
 typedef struct mz_frame_t
 {
@@ -16,33 +10,24 @@ typedef struct mz_frame_t
     int     y;
     int     w;
     int     h;
-
     int     duration;
-
-    mz_image_tag_t  **images;
-    int             nimage;
-
 } mz_frame_t;
 
 typedef struct mz_sequence_t
 {
-    char*       name;
-
-    mz_frame_t  *cur_frame;
+    char        *stat;
     mz_frame_t  **frames;
     int         nframe;
-
 } mz_sequence_t;
 
 typedef struct mz_animation_t
 {
-    mz_sequence_t   *cur_sequence;
-
+    char            *name;
     mz_sequence_t   **sequences;
     int             nsequence;
-
 } mz_animation_t;
 
-MZ_API mz_animation_t* mz_animation_load(const char *file);
+MZ_API int mz_animation_generate_ani_file(const char *xml_file, const char *dst_folder);
+//MZ_API mz_animation_t* mz_animation_load(const char *ani_file);
 
 #endif

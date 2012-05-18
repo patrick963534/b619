@@ -3,23 +3,51 @@
 #include <mz/defs.h>
 #include <mz/simple_xml.h>
 
-#define BUFFERSIZE 1024 * 1024 * 3
-#define READALINE 1024 * 1024 * 1
+typedef struct image_tag_t
+{
+    char    *filepath;
+    int     origin_x;
+    int     origin_y;
+} image_tag_t;
 
-static void read_image(mz_xml_node_t node, mz_frame_t *frame)
+typedef struct frame_tag_t
+{
+    int             duration;
+    image_tag_t     **images;
+    int             nimage;
+
+} frame_tag_t;
+
+typedef struct animation_tag_t
+{
+    char        *name;
+    char        *stat;
+    frame_tag_t *cur_frame;
+    frame_tag_t **frames;
+    int         nframe;
+
+} animation_tag_t;
+
+typedef struct animation_set_tag_t
+{
+    animation_tag_t     **animations;
+    int                 nanimation;
+} animation_set_tag_t;
+
+static void read_image(mz_xml_node_t node, frame_tag_t *frame)
 {
     mz_xml_node_t cur = mz_xml_children_node(node);
     const char *node_name = "image";
 
     int nitem = 4;
     int count = 0;
-    mz_image_tag_t **items = mz_malloc(sizeof(items[0]) * nitem);
+    image_tag_t **items = mz_malloc(sizeof(items[0]) * nitem);
 
     if (!mz_xml_is_tag(cur, node_name))
         cur = mz_xml_find_next_node(cur, node_name); 
 
     while (cur != NULL) {
-        mz_image_tag_t *v = mz_malloc(sizeof(*v));
+        image_tag_t *v = mz_malloc(sizeof(*v));
 
         char *org_x = mz_xml_node_attribute(cur, "originX");
         char *org_y = mz_xml_node_attribute(cur, "originY");
@@ -46,20 +74,20 @@ static void read_image(mz_xml_node_t node, mz_frame_t *frame)
     frame->nimage = count;
 }
 
-static void read_sequence(mz_xml_node_t node, mz_sequence_t *sequence)
+static void read_sequence(mz_xml_node_t node, animation_tag_t *sequence)
 {
     mz_xml_node_t cur = mz_xml_children_node(node);
     const char *node_name = "frame";
 
     int nitem = 4;
     int count = 0;
-    mz_frame_t **items = mz_malloc(sizeof(items[0]) * nitem);
+    frame_tag_t **items = mz_malloc(sizeof(items[0]) * nitem);
 
     if (!mz_xml_is_tag(cur, node_name))
         cur = mz_xml_find_next_node(cur, node_name); 
 
     while (cur != NULL) {
-        mz_frame_t *v = mz_malloc(sizeof(*v));
+        frame_tag_t *v = mz_malloc(sizeof(*v));
         char *duration = mz_xml_node_attribute(cur, "duration");
 
         v->duration = mz_atoi(duration, 100);
@@ -82,21 +110,40 @@ static void read_sequence(mz_xml_node_t node, mz_sequence_t *sequence)
     sequence->nframe = count;
 }
 
-static void read_animation_set(mz_xml_node_t node, mz_animation_t *animation)
+static void split_name_and_stat(const char *name_prop, char *name, char *stat)
+{
+    if (mz_strchr(name_prop, '.') == NULL) {
+        name = mz_strdup(name_prop);
+        stat = NULL;
+    }
+    else {
+        char *tok = mz_strdup(name_prop);
+
+        name = mz_strdup(mz_strtrim(mz_strtok(tok, "."), " "));
+        stat = mz_strdup(mz_strtrim(mz_strtok(NULL, "."), " "));
+
+        logI("name -> %s ----- stat -> %s", name, stat);
+        mz_free(tok);
+    }
+}
+
+static void read_animation_set(mz_xml_node_t node, animation_set_tag_t *animation)
 {
     mz_xml_node_t cur = mz_xml_children_node(node);
     const char *node_name = "animation";
 
     int nitem = 4;
     int count = 0;
-    mz_sequence_t **items = mz_malloc(sizeof(items[0]) * nitem);
+    animation_tag_t **items = mz_malloc(sizeof(items[0]) * nitem);
 
     if (!mz_xml_is_tag(cur, node_name))
         cur = mz_xml_find_next_node(cur, node_name); 
 
     while (cur != NULL) {
-        mz_sequence_t *v = mz_malloc(sizeof(*v));
-        v->name = mz_xml_node_attribute(cur, "name");
+        animation_tag_t *v = mz_malloc(sizeof(*v));
+        char *name_prop = mz_xml_node_attribute(cur, "name");
+        split_name_and_stat(name_prop, v->name, v->stat);
+        mz_free(name_prop);
 
         read_sequence(cur, v);
 
@@ -111,19 +158,19 @@ static void read_animation_set(mz_xml_node_t node, mz_animation_t *animation)
 
     items = mz_realloc(items, sizeof(items[0]) * count);
 
-    animation->sequences = items;
-    animation->nsequence = count;
+    animation->animations = items;
+    animation->nanimation = count;
 }
 
-MZ_API mz_animation_t* mz_animation_load(const char *file)
+static animation_set_tag_t* parse_xml(const char *xml_file)
 {
-    mz_animation_t* self = mz_malloc(sizeof(*self));
+    animation_set_tag_t* self = mz_malloc(sizeof(*self));
     
-    mz_xml_t *xml = mz_xml_load(file);
+    mz_xml_t *xml = mz_xml_load(xml_file);
     mz_xml_node_t cur = mz_xml_get_root_node(xml);
 
     if (!cur) {
-        logI("Can't read the root element: %s\n", file);
+        logI("Can't read the root element: %s\n", xml_file);
         goto error;
     }
 
@@ -142,9 +189,39 @@ MZ_API mz_animation_t* mz_animation_load(const char *file)
 
     read_animation_set(cur, self);
 
+    return self;
+
 error:
     if (xml)
         mz_xml_delete(xml);
 
-    return self;
+    return NULL;
+}
+
+static int is_exist(const char **names, int count, const char *target)
+{
+    int i;
+
+    for (i = 0; i < count; i++)
+        if (mz_strcmp(names[i], target) == 0)
+            return 1;
+
+    return 0;
+}
+
+static void get_sequence_name_list(animation_set_tag_t *set, char ***ret_names, int *ret_count)
+{
+    char **names = mz_malloc(sizeof(names[0]) * set->nanimation);
+
+
+}
+
+MZ_API int mz_animation_generate_ani_file(const char *xml_file, const char *dst_folder)
+{
+    animation_set_tag_t *v = parse_xml(xml_file);
+}
+
+MZ_API animation_set_tag_t* mz_animation_load(const char *ani_file)
+{
+    return NULL;
 }

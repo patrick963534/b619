@@ -17,9 +17,13 @@
 #define mz_assert(v) assert(v)
 
 #define mz_strdup(str) strdup(str)
+#define mz_strtok(str, delimiter) strtok(str, delimiter) 
+#define mz_strchr(str, ch) strchr(str, ch)
+#define mz_strcmp(str1, str2) strcmp(str1, str2)
 
-MZ_API int mz_atoi(const char* value, int def);
-MZ_API void print_log(const char *type, const char *format, ...);
+MZ_API int      mz_atoi(const char *value, int def);
+MZ_API char*    mz_strtrim(char *str, const char *delimit);
+MZ_API void     print_log(const char *type, const char *format, ...);
 
 #define logI(args...) print_log("Info", args) 
 #define logE(args...) print_log("Error", args) 
