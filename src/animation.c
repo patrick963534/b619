@@ -228,43 +228,57 @@ static void get_sequence_name_list(animation_set_tag_t *set, const char ***ret_n
     *ret_count = count;
 }
 
-static void generate_one_ani_file(animation_set_tag_t *set, const char *anim_name)
+static void get_image_names_in_one_animation(animation_tag_t *anim, const char ***ret_images, int *ret_image_count)
 {
     int nimage = 4;
     const char **images = mz_malloc(sizeof(images[0]) * nimage);
     int image_count = 0;
 
-    int i, j, k, h;
+    int j, k, h;
 
-    for (i = 0; i < set->nanimation; i++) {
-        animation_tag_t *anim = set->animations[i];
+    for (j = 0; j < anim->nframe; j++) {
+        frame_tag_t *frame = anim->frames[j];
 
-        if (!mz_strequal(anim->name, anim_name))
-            continue;
+        for (k = 0; k < frame->nimage; k++) {
+            image_tag_t *img = frame->images[k];
+            
+            if (is_exist(images, image_count, img->filepath))
+                continue;
 
-        for (j = 0; j < anim->nframe; j++) {
-            frame_tag_t *frame = anim->frames[j];
+            images[image_count++] = mz_strdup(img->filepath);
 
-            for (k = 0; k < frame->nimage; k++) {
-                image_tag_t *img = frame->images[k];
-                
-                if (is_exist(images, image_count, img->filepath))
-                    continue;
-
-                images[image_count++] = mz_strdup(img->filepath);
-
-                if (image_count == nimage) {
-                    nimage += nimage;
-                    images = mz_realloc(images, sizeof(images[0]) * nimage);
-                }
+            if (image_count == nimage) {
+                nimage += nimage;
+                images = mz_realloc(images, sizeof(images[0]) * nimage);
             }
         }
     }
 
+    *ret_images = images;
+    *ret_image_count = image_count;
+}
+
+static void generate_one_ani_file(animation_set_tag_t *set, const char *anim_name)
+{
+    int nimage = 4;
+    const char **images;
+    int image_count;
+    animation_tag_t *anim;
+    int i;
+
+    for (i = 0; i < set->nanimation; i++) {
+        anim = set->animations[i];
+
+        if (mz_strequal(anim->name, anim_name))
+            break;
+    }
+
+    get_image_names_in_one_animation(anim, &images, &image_count);
+
+    logI("image count -> %d", image_count);
     for (i = 0; i < image_count; i++)
         logI("image file -> %s", images[i]);
 
-    logI("image count -> %d", image_count);
 }
 
 MZ_API int mz_animation_generate_ani_file(const char *xml_file, const char *dst_folder)
