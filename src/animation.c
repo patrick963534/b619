@@ -110,19 +110,18 @@ static void read_sequence(mz_xml_node_t node, animation_tag_t *sequence)
     sequence->nframe = count;
 }
 
-static void split_name_and_stat(const char *name_prop, char *name, char *stat)
+static void split_name_and_stat(const char *name_prop, char **name, char **stat)
 {
     if (mz_strchr(name_prop, '.') == NULL) {
-        name = mz_strdup(name_prop);
-        stat = NULL;
+        *name = mz_strdup(name_prop);
+        *stat = NULL;
     }
     else {
         char *tok = mz_strdup(name_prop);
 
-        name = mz_strdup(mz_strtrim(mz_strtok(tok, "."), " "));
-        stat = mz_strdup(mz_strtrim(mz_strtok(NULL, "."), " "));
+        *name = mz_strdup(mz_strtrim(mz_strtok(tok, "."), " "));
+        *stat = mz_strdup(mz_strtrim(mz_strtok(NULL, "."), " "));
 
-        logI("name -> %s ----- stat -> %s", name, stat);
         mz_free(tok);
     }
 }
@@ -142,7 +141,8 @@ static void read_animation_set(mz_xml_node_t node, animation_set_tag_t *animatio
     while (cur != NULL) {
         animation_tag_t *v = mz_malloc(sizeof(*v));
         char *name_prop = mz_xml_node_attribute(cur, "name");
-        split_name_and_stat(name_prop, v->name, v->stat);
+
+        split_name_and_stat(name_prop, &v->name, &v->stat);
         mz_free(name_prop);
 
         read_sequence(cur, v);
@@ -209,16 +209,79 @@ static int is_exist(const char **names, int count, const char *target)
     return 0;
 }
 
-static void get_sequence_name_list(animation_set_tag_t *set, char ***ret_names, int *ret_count)
+static void get_sequence_name_list(animation_set_tag_t *set, const char ***ret_names, int *ret_count)
 {
-    char **names = mz_malloc(sizeof(names[0]) * set->nanimation);
+    const char **names = mz_malloc(sizeof(names[0]) * set->nanimation);
+    int count = 0;
+    int i;
+    
+    for (i = 0; i < set->nanimation;  i++) {
+        if (is_exist(names, count, set->animations[i]->name))
+            continue;
 
+        names[count++] = mz_strdup(set->animations[i]->name);
+    }
 
+    names = mz_realloc(names, sizeof(names[0]) * count);
+
+    *ret_names = names;
+    *ret_count = count;
+}
+
+static void generate_one_ani_file(animation_set_tag_t *set, const char *anim_name)
+{
+    int nimage = 4;
+    const char **images = mz_malloc(sizeof(images[0]) * nimage);
+    int image_count = 0;
+
+    int i, j, k, h;
+
+    for (i = 0; i < set->nanimation; i++) {
+        animation_tag_t *anim = set->animations[i];
+
+        if (mz_strcmp(anim->name, anim_name) != 0)
+            continue;
+
+        logI("src->%s --- dst->%s", anim->name, anim_name);
+
+        for (j = 0; j < anim->nframe; j++) {
+            frame_tag_t *frame = anim->frames[j];
+
+            for (k = 0; k < frame->nimage; k++) {
+                image_tag_t *img = frame->images[k];
+                
+                if (is_exist(images, image_count, img->filepath))
+                    continue;
+
+                images[image_count++] = mz_strdup(img->filepath);
+
+                if (image_count == nimage) {
+                    nimage += nimage;
+                    images = mz_realloc(images, sizeof(images[0]) * nimage);
+                }
+            }
+        }
+    }
+
+    for (i = 0; i < image_count; i++)
+        logI("image file -> %s", images[i]);
+
+    logI("image count -> %d", image_count);
 }
 
 MZ_API int mz_animation_generate_ani_file(const char *xml_file, const char *dst_folder)
 {
-    animation_set_tag_t *v = parse_xml(xml_file);
+    animation_set_tag_t *set = parse_xml(xml_file);
+    const char **animation_names;
+    int animation_count;
+    int i;
+
+    get_sequence_name_list(set, &animation_names, &animation_count);
+
+    for (i = 0; i < animation_count; i++) 
+        generate_one_ani_file(set, animation_names[i]);
+
+    return 0;
 }
 
 MZ_API animation_set_tag_t* mz_animation_load(const char *ani_file)
