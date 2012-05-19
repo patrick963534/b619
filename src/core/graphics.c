@@ -19,8 +19,8 @@ void mz_graphics_flush()
 
 void mz_graphics_init()
 {
-    int width = 320;
-    int height = 240;
+    int width = 640;
+    int height = 480;
 
 	SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -56,21 +56,14 @@ static GLuint get_pixel_format(SDL_Surface *surface)
     return format;
 }
 
-static void generate_power_of_2_image(mz_image_t *src_image, int x, int y, int w, int h, mz_image_t **ret_image)
+void mz_graphics_draw_texture(mz_image_t *image, int x, int y)
 {
-    int p2_w = mz_get_larger_power_of_2(w);
-    int p2_h = mz_get_larger_power_of_2(h);
+    float tex_max_x = (float)image->real_w / (float)image->w;
+    float tex_max_y = (float)image->real_h / (float)image->h;
+    float tex[4][2];
+    int w = image->real_w;
+    int h = image->real_h;
 
-    if (p2_w == w && p2_h == h) {
-        *ret_image = src_image;
-    }
-    else {
-
-    }
-}
-
-void mz_graphics_draw_texture(mz_image_t *image, int x, int y, int w, int h)
-{
     glLoadIdentity();
 
     glBindTexture(GL_TEXTURE_2D, gl_texture);
@@ -87,9 +80,9 @@ void mz_graphics_draw_texture(mz_image_t *image, int x, int y, int w, int h)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glBegin(GL_QUADS);
-        glTexCoord2f(0, 0); glVertex3i(x,     y,     0);
-        glTexCoord2f(1, 0); glVertex3i(x + w, y,     0);
-        glTexCoord2f(1, 1); glVertex3i(x + w, y + h, 0);
-        glTexCoord2f(0, 1); glVertex3i(x,     y + h, 0);
+        glTexCoord2f(0,         0);         glVertex3i(x,     y,     0);
+        glTexCoord2f(tex_max_x, 0);         glVertex3i(x + w, y,     0);
+        glTexCoord2f(tex_max_x, tex_max_y); glVertex3i(x + w, y + h, 0);
+        glTexCoord2f(0,         tex_max_y); glVertex3i(x,     y + h, 0);
     glEnd();
 }

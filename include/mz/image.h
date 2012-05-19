@@ -16,13 +16,15 @@ typedef struct mz_image_t
     int     format;
     int     w;
     int     h;
+    int     real_w;
+    int     real_h;
     int     bytes_per_pixel;
-    int     pixel_bytes_count;
+    int     pitch;
 
 } mz_image_t;
 
-MZ_API mz_image_t* mz_image_load(const char* filepath);
-
-MZ_API void mz_image_destruct(mz_object_t* self_);
+MZ_API void         mz_image_make_fit_size_power_of_2(mz_image_t *img);
+MZ_API mz_image_t*  mz_image_load(const char* filepath);
+MZ_API void         mz_image_destruct(mz_object_t* self_);
 
 #endif

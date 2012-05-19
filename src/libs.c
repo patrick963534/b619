@@ -47,7 +47,7 @@ MZ_API int mz_log2_int(int v)
 
     assert(v >= 0);
 
-    for (power = 0; temp != 0; power++)
+    for (power = 0; temp > 1; power++)
         temp /= 2;
  
     return power;
@@ -66,10 +66,10 @@ MZ_API int mz_pow_int(int base, int x)
     if (x == 0)
         return 1;
 
-    for (i = x; i != 0; i--)
+    for (i = x; i > 0; i--)
         result *= base;
 
-    return base;
+    return result;
 }
 
 MZ_API int mz_get_larger_power_of_2(int v)

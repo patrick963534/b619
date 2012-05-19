@@ -35,4 +35,7 @@ MZ_API int      mz_get_larger_power_of_2(int v);
 #define logI(args...) mz_print_log("Info", args) 
 #define logE(args...) mz_print_log("Error", args) 
 
+#define mz_max(a, b) max(a, b)
+#define mz_min(a, b) min(a, b)
+
 #endif

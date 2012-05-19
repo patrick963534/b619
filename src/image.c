@@ -31,10 +31,37 @@ mz_image_t* mz_image_create_empty()
     return image;
 }
 
+MZ_API void mz_image_make_fit_size_power_of_2(mz_image_t *img)
+{
+    int p2_w = mz_get_larger_power_of_2(img->w);
+    int p2_h = mz_get_larger_power_of_2(img->h);
+    void *pixels;
+    int pitch;
+    int i;
+
+    if (p2_w == img->w && p2_h == img->h)
+        return;
+
+    pitch = p2_w * img->bytes_per_pixel;
+    pixels = mz_malloc(p2_h * pitch);
+
+    for (i = 0; i < img->h; i++)
+        mz_memcpy(pixels + i * pitch, img->pixels + i * img->pitch, 
+                                    img->w * img->bytes_per_pixel);
+
+    mz_free(img->pixels);
+
+    img->w = p2_w;
+    img->h = p2_h;
+    img->pitch = pitch;
+    img->pixels = pixels;
+}
+
 MZ_API mz_image_t* mz_image_load(const char *path)
 {
     mz_image_t *image = mz_malloc(sizeof(*image));
 	SDL_Surface *surface = load_image_with_alpha(path); 
+    int bytes_count;
 
 	if(surface->format->BytesPerPixel == 4)
 		image->format = (surface->format->Rmask==0x000000ff) ? GL_RGBA : GL_BGRA;
@@ -48,10 +75,14 @@ MZ_API mz_image_t* mz_image_load(const char *path)
     image->filename = mz_strdup(path);
     image->w = surface->w;
     image->h = surface->h;
+    image->real_w = surface->w;
+    image->real_h = surface->h;
     image->bytes_per_pixel = surface->format->BytesPerPixel;
-    image->pixel_bytes_count = image->bytes_per_pixel * image->w * image->h;
-    image->pixels = mz_malloc(image->pixel_bytes_count);
-    mz_memcpy(image->pixels, surface->pixels, image->pixel_bytes_count);
+    image->pitch = surface->pitch;
+
+    bytes_count = image->pitch * image->h;
+    image->pixels = mz_malloc(bytes_count);
+    mz_memcpy(image->pixels, surface->pixels, bytes_count);
 
     SDL_FreeSurface(surface);
 
