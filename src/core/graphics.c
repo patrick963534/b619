@@ -60,7 +60,6 @@ void mz_graphics_draw_texture(mz_image_t *image, int x, int y)
 {
     float tex_max_x = (float)image->real_w / (float)image->w;
     float tex_max_y = (float)image->real_h / (float)image->h;
-    float tex[4][2];
     int w = image->real_w;
     int h = image->real_h;
 
