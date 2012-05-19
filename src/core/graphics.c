@@ -42,20 +42,6 @@ void mz_graphics_init()
     glGenTextures(1, &gl_texture);
 }
 
-static GLuint get_pixel_format(SDL_Surface *surface)
-{
-    GLuint format = 0;
-
-	if(surface->format->BytesPerPixel == 4)
-		format = (surface->format->Rmask==0x000000ff) ? GL_RGBA : GL_BGRA;
-	else if(surface->format->BytesPerPixel == 3)
-		format = (surface->format->Rmask==0x000000ff) ? GL_RGB : GL_BGR;
-	else
-		logI("wrong image format.");
-
-    return format;
-}
-
 void mz_graphics_draw_texture(mz_image_t *image, int x, int y)
 {
     float tex_max_x = (float)image->real_w / (float)image->w;
