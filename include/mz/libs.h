@@ -27,7 +27,10 @@ MZ_API int      mz_strequal(const char *str1, const char *str2);
 
 MZ_API void     mz_print_log(const char *type, const char *format, ...);
 
+MZ_API int      mz_log2_int(int v);
+MZ_API int      mz_pow_int(int base, int x);
 MZ_API int      mz_is_power_of_2(int v);
+MZ_API int      mz_get_larger_power_of_2(int v);
 
 #define logI(args...) mz_print_log("Info", args) 
 #define logE(args...) mz_print_log("Error", args) 

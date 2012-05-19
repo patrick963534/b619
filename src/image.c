@@ -15,7 +15,7 @@ static SDL_Surface* load_image_with_alpha(const char *path)
     return IMG_Load(path);
 }
 
-void mz_image_destruct(mz_object_t* self_)
+MZ_API void mz_image_destruct(mz_object_t* self_)
 {
     mz_downcast(mz_image_t);
 
@@ -25,13 +25,16 @@ void mz_image_destruct(mz_object_t* self_)
     mz_object_destruct(self_);
 }
 
-mz_image_t* mz_image_load(const char *path)
+mz_image_t* mz_image_create_empty()
+{
+    mz_image_t *image = mz_malloc(sizeof(*image));
+    return image;
+}
+
+MZ_API mz_image_t* mz_image_load(const char *path)
 {
     mz_image_t *image = mz_malloc(sizeof(*image));
 	SDL_Surface *surface = load_image_with_alpha(path); 
-
-    if (!mz_is_power_of_2(surface->w) || !mz_is_power_of_2(surface->h)) 
-		goto error;
 
 	if(surface->format->BytesPerPixel == 4)
 		image->format = (surface->format->Rmask==0x000000ff) ? GL_RGBA : GL_BGRA;

@@ -11,13 +11,13 @@ typedef struct mz_image_t
 {
     extends_object();
 
-    char*     filename;
-    void*     pixels;
-    int       format;
-    int       w;
-    int       h;
-    int       bytes_per_pixel;
-    int       pixel_bytes_count;
+    char*   filename;
+    void*   pixels;
+    int     format;
+    int     w;
+    int     h;
+    int     bytes_per_pixel;
+    int     pixel_bytes_count;
 
 } mz_image_t;
 

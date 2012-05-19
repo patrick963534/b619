@@ -56,11 +56,17 @@ static GLuint get_pixel_format(SDL_Surface *surface)
     return format;
 }
 
-static void generate_power_of_2_image(mz_image_t *src_image, int x, int y, int w, int h, mz_image_t *ret_image)
+static void generate_power_of_2_image(mz_image_t *src_image, int x, int y, int w, int h, mz_image_t **ret_image)
 {
-    int p2_w = (mz_is_power_of_2(w)) ? w : (w / 2 * 2);
-    int p2_h;
+    int p2_w = mz_get_larger_power_of_2(w);
+    int p2_h = mz_get_larger_power_of_2(h);
 
+    if (p2_w == w && p2_h == h) {
+        *ret_image = src_image;
+    }
+    else {
+
+    }
 }
 
 void mz_graphics_draw_texture(mz_image_t *image, int x, int y, int w, int h)
