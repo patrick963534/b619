@@ -139,6 +139,8 @@ static mz_sequence_t* generate_one_ani_sequence(animation_tag_t *ani_tag, ani_in
 
 static void write_to_ani_file(mz_animation_t *animation, const char *folder)
 {
+    FILE *fp;
+
     char fullpath[256];
     char filename[256];
 
@@ -146,6 +148,10 @@ static void write_to_ani_file(mz_animation_t *animation, const char *folder)
     mz_path_combine_path(folder, filename, fullpath, sizeof(fullpath));   
 
     logI("PATH -> %s", fullpath);
+
+    fp = mz_fopen(fullpath, "w");
+
+    mz_fclose(fp);
 }
 
 static void generate_one_ani_file(animation_set_tag_t *set, const char *anim_name, const char *folder)
@@ -179,6 +185,8 @@ static void generate_one_ani_file(animation_set_tag_t *set, const char *anim_nam
             animation->sequences = mz_realloc(animation->sequences, sizeof(animation->sequences[0]) * nitem);
         }
     }
+
+    animation->name = mz_strdup(anim_name);
 
     write_to_ani_file(animation, folder);
 }

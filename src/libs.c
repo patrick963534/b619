@@ -84,7 +84,7 @@ MZ_API char* mz_path_combine_path(const char* folder, const char* filename, char
 {
     int len = strlen(folder);
 
-    if (folder[len] == '/')
+    if (folder[len - 1] == '/')
         sprintf(ret_path, "%s%s", folder, filename);
     else
         sprintf(ret_path, "%s/%s", folder, filename);

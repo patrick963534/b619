@@ -41,4 +41,7 @@ MZ_API char*    mz_path_combine_path(const char* folder, const char* filename, c
 #define mz_max(a, b) max(a, b)
 #define mz_min(a, b) min(a, b)
 
+#define mz_fopen(path, mode)      fopen(path, mode)
+#define mz_fclose(fp)             fclose(fp)
+
 #endif
