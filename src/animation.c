@@ -22,7 +22,6 @@ typedef struct animation_tag_t
 {
     char        *name;
     char        *stat;
-    frame_tag_t *cur_frame;
     frame_tag_t **frames;
     int         nframe;
 
@@ -265,19 +264,104 @@ static void get_unique_image_names_in_one_animation(animation_set_tag_t *set, co
     *ret_image_count = image_count;
 }
 
-static void generate_one_ani_file(animation_set_tag_t *set, const char *anim_name)
+static int get_array_id(const char **names, int count, const char *target)
 {
-    const char **images;
-    int image_count;
     int i;
 
-    get_unique_image_names_in_one_animation(set, anim_name, &images, &image_count);
+    for (i = 0; i < count; i++)
+        if (mz_strequal(names[i], target))
+            return i;
 
-    logI("image count -> %d", image_count);
-    for (i = 0; i < image_count; i++)
-        logI("image file -> %s", images[i]);
+    return -1;
+}
 
-    
+typedef struct ani_info_t
+{
+    const char  **images;
+    int         image_count;
+} ani_info_t;
+
+static mz_frame_t* generate_one_ani_frame(frame_tag_t *frame_tag, ani_info_t *info)
+{
+    int nitem = 4;
+    int item_id = 0;
+    int i;
+
+    mz_frame_t *frame = mz_malloc(sizeof(*frame));
+    frame->patterns = mz_malloc(sizeof(frame->patterns[0]) * nitem);
+
+    for (i = 0; i < frame_tag->nimage; i++) { 
+        image_tag_t *image_tag = frame_tag->images[i];
+        mz_pattern_t *p = mz_malloc(sizeof(*p));
+
+        p->x = image_tag->origin_x;
+        p->y = image_tag->origin_y;
+        p->image_id = get_array_id(info->images, info->image_count, image_tag->filepath);
+        
+
+        if (item_id == nitem) {
+            nitem += nitem;
+            frame->patterns = mz_realloc(frame->patterns, sizeof(frame->patterns[0]) * nitem);
+        }
+    }
+
+    frame->duration = frame_tag->duration;
+}
+
+static mz_sequence_t* generate_one_ani_sequence(animation_tag_t *ani_tag, ani_info_t *ani_info)
+{
+    int nitem = 4;
+    int item_id = 0;
+    int i;
+
+    mz_sequence_t *sequence = mz_malloc(sizeof(*sequence));
+    sequence->frames = mz_malloc(sizeof(sequence->frames[0]) * nitem);
+
+    for (i = 0; i < ani_tag->nframe; i++) { 
+        frame_tag_t *f_tag = ani_tag->frames[i];
+
+        sequence->frames[item_id++] = generate_one_ani_frame(f_tag, ani_info);
+
+        if (item_id == nitem) {
+            nitem += nitem;
+            sequence->frames = mz_realloc(sequence->frames, sizeof(sequence->frames) * nitem);
+        }
+    }
+
+    sequence->stat = ani_tag->stat;
+};
+
+static void generate_one_ani_file(animation_set_tag_t *set, const char *anim_name)
+{
+    ani_info_t ani_info = {0};
+    int nitem = 4;
+    int item_id = 0;
+    int i;
+
+    mz_animation_t *animation = mz_malloc(sizeof(*animation));
+    animation->sequences = mz_malloc(sizeof(animation->sequences[0]) * nitem);
+
+    get_unique_image_names_in_one_animation(set, anim_name, &ani_info.images, &ani_info.image_count);
+
+    logI("image count -> %d", ani_info.image_count);
+    for (i = 0; i < ani_info.image_count; i++)
+        logI("image file -> %s", ani_info.images[i]);
+
+    for (i = 0; i < set->nanimation; i++) {
+        animation_tag_t *ani_tag = set->animations[i];
+        mz_sequence_t *sequence;
+
+        if (!mz_strequal(ani_tag->name, anim_name))
+            continue;
+
+        sequence = generate_one_ani_sequence(ani_tag, &ani_info);
+        animation->sequences[item_id++] = sequence;
+        
+        if (item_id == nitem) {
+            nitem += nitem;
+            animation->sequences = mz_realloc(animation->sequences, sizeof(animation->sequences[0]) * nitem);
+        }
+    }
 }
 
 MZ_API int mz_animation_generate_ani_file(const char *xml_file, const char *dst_folder)
