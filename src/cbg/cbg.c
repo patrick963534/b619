@@ -1,4 +1,5 @@
 #include "cbg.h"
+#include <mz/image.h>
 
 void generate_cbg(const char **image_files, int count, const char *path)
 {

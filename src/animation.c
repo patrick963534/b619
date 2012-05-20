@@ -198,7 +198,7 @@ error:
     return NULL;
 }
 
-static int is_exist(const char **names, int count, const char *target)
+static int is_in_array(const char **names, int count, const char *target)
 {
     int i;
 
@@ -216,7 +216,7 @@ static void get_sequence_name_list(animation_set_tag_t *set, const char ***ret_n
     int i;
     
     for (i = 0; i < set->nanimation;  i++) {
-        if (is_exist(names, count, set->animations[i]->name))
+        if (is_in_array(names, count, set->animations[i]->name))
             continue;
 
         names[count++] = mz_strdup(set->animations[i]->name);
@@ -248,7 +248,7 @@ static void get_unique_image_names_in_one_animation(animation_set_tag_t *set, co
             for (k = 0; k < frame->nimage; k++) {
                 image_tag_t *img = frame->images[k];
                 
-                if (is_exist(images, image_count, img->filepath))
+                if (is_in_array(images, image_count, img->filepath))
                     continue;
 
                 images[image_count++] = mz_strdup(img->filepath);
@@ -267,7 +267,6 @@ static void get_unique_image_names_in_one_animation(animation_set_tag_t *set, co
 
 static void generate_one_ani_file(animation_set_tag_t *set, const char *anim_name)
 {
-    int nimage = 4;
     const char **images;
     int image_count;
     int i;
@@ -278,7 +277,7 @@ static void generate_one_ani_file(animation_set_tag_t *set, const char *anim_nam
     for (i = 0; i < image_count; i++)
         logI("image file -> %s", images[i]);
 
-
+    
 }
 
 MZ_API int mz_animation_generate_ani_file(const char *xml_file, const char *dst_folder)

@@ -19,8 +19,10 @@ struct mz_actor_t
     extends_actor();
 };
 
-MZ_API mz_actor_t* mz_actor_new(const char *file, size_t size, mz_node_t *parent);
+MZ_API void         mz_actor_draw(mz_node_t *self_);
+MZ_API void         mz_actor_step(mz_node_t *self_, int ellapse);
+MZ_API mz_actor_t*  mz_actor_new(const char *file, size_t size, mz_node_t *parent);
 
-MZ_API void mz_actor_destruct(mz_object_t* self_);
+MZ_API void         mz_actor_destruct(mz_object_t* self_);
 
 #endif

@@ -33,6 +33,9 @@ typedef struct mz_animation_t
     char            *name;
     mz_sequence_t   **sequences;
     int             nsequence;
+
+    mz_image_t      **images;
+    int             nimage;
 } mz_animation_t;
 
 MZ_API int mz_animation_generate_ani_file(const char *xml_file, const char *dst_folder);
