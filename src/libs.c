@@ -79,3 +79,28 @@ MZ_API int mz_get_larger_power_of_2(int v)
     else
         return mz_pow_int(2, mz_log2_int(v)+ 1);
 }
+
+MZ_API char* mz_path_combine_path(const char* folder, const char* filename, char *ret_path, int max_path_size)
+{
+    int len = strlen(folder);
+
+    if (folder[len] == '/')
+        sprintf(ret_path, "%s%s", folder, filename);
+    else
+        sprintf(ret_path, "%s/%s", folder, filename);
+
+    assert(strlen(ret_path) < max_path_size);
+
+    return ret_path;
+}
+
+MZ_API void mz_snprintf(char *buf, int max_size, const char *format, ...)
+{
+    va_list va;
+
+    va_start(va, format);
+    vsnprintf(buf, max_size, format, va);
+    va_end(va);
+
+    assert(strlen(buf) < max_size);
+}
