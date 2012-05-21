@@ -19,8 +19,8 @@ void mz_graphics_flush()
 
 void mz_graphics_init()
 {
-    int width = 640;
-    int height = 480;
+    int width = 320;
+    int height = 240;
 
 	SDL_Init(SDL_INIT_EVERYTHING);
 

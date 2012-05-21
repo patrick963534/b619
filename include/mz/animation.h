@@ -6,19 +6,18 @@
 
 typedef struct mz_pattern_t
 {
-    int     x;
-    int     y;
+    int     origin_x;
+    int     origin_y;
     int     image_id;
 
 } mz_pattern_t;
 
 typedef struct mz_frame_t
 {
-    mz_pattern_t    **patterns;
-    int             npattern;
-
     int             duration;
 
+    mz_pattern_t    **patterns;
+    int             npattern;
 } mz_frame_t;
 
 typedef struct mz_sequence_t
@@ -39,6 +38,7 @@ typedef struct mz_animation_t
 } mz_animation_t;
 
 MZ_API int mz_animation_generate_ani_file(const char *xml_file, const char *dst_folder);
-//MZ_API mz_animation_t* mz_animation_load(const char *ani_file);
+
+MZ_API mz_animation_t* mz_animation_load(const char *ani_file);
 
 #endif

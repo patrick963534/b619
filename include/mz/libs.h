@@ -25,6 +25,8 @@ MZ_API int      mz_atoi(const char *value, int def);
 MZ_API char*    mz_strtrim(char *str, const char *delimit);
 MZ_API int      mz_strequal(const char *str1, const char *str2);
 MZ_API void     mz_snprintf(char *buf, int max_size, const char *format, ...);
+MZ_API char*    mz_str_concat(char *buf, const char *str);
+MZ_API int      mz_str_is_end_with(const char *str, const char *suffix);
 
 MZ_API void     mz_print_log(const char *type, const char *format, ...);
 
@@ -41,7 +43,16 @@ MZ_API char*    mz_path_combine_path(const char* folder, const char* filename, c
 #define mz_max(a, b) max(a, b)
 #define mz_min(a, b) min(a, b)
 
-#define mz_fopen(path, mode)      fopen(path, mode)
-#define mz_fclose(fp)             fclose(fp)
+#define mz_fopen(path, mode)            fopen(path, mode)
+#define mz_fprintf(fp, format, args...) fprintf(fp, format, args)
+#define mz_fscanf(fp, format, args...)  fscanf(fp, format, args)
+#define mz_fwrite(ptr, size, nmemb, fp) fwrite(ptr, size, nmemb, fp)
+#define mz_fread(ptr, size, nmemb, fp)  fwrite(ptr, size, nmemb, fp)
+#define mz_fclose(fp)                   fclose(fp)
+
+MZ_API int      mz_file_write_string(FILE *fp, const char *str);
+MZ_API int      mz_file_write_int(FILE *fp, int v);
+MZ_API char*    mz_file_read_string(FILE *fp);
+MZ_API int      mz_file_read_int(FILE *fp);
 
 #endif

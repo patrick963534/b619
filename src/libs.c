@@ -104,3 +104,50 @@ MZ_API void mz_snprintf(char *buf, int max_size, const char *format, ...)
 
     assert(strlen(buf) < max_size);
 }
+
+MZ_API char* mz_str_concat(char *buf, const char *str)
+{
+    return strcat(buf, str);
+}
+
+MZ_API int mz_file_write_string(FILE *fp, const char *str)
+{
+    int len = strlen(str) + 1;
+    fwrite(&len, 4, 1, fp);
+    fwrite(str, len, 1, fp);
+
+    return len;
+}
+
+MZ_API int mz_file_write_int(FILE *fp, int v)
+{
+    fwrite(&v, 4, 1, fp);
+    return 4;
+}
+
+MZ_API char* mz_file_read_string(FILE *fp)
+{
+    int len;
+    char *str;
+
+    fread(&len, 4, 1, fp);
+    str = (char*)mz_malloc(len);
+    fread(str, len, 1, fp);
+
+    return str;
+}
+
+MZ_API int mz_file_read_int(FILE *fp)
+{
+    int v;
+    fread(&v, 4, 1, fp);
+    return v;
+}
+
+MZ_API int mz_str_is_end_with(const char *str, const char *suffix)
+{
+    assert(suffix);
+    assert(str);
+
+    return strcmp(str + (strlen(str) - strlen(suffix)), suffix) == 0;
+}
