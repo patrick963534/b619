@@ -11,8 +11,7 @@ typedef struct mz_actor_t mz_actor_t;
 
 #define extends_actor() \
     extends_node();             \
-    mz_animation_t *animation;  \
-    mz_image_t *image
+    mz_animation_t *animation
 
 struct mz_actor_t
 {

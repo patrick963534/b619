@@ -151,8 +151,7 @@ static void write_to_ani_file(mz_animation_t *animation, const char *folder, ani
     char filename[256];
 
     mz_snprintf(filename, sizeof(filename), "%s.ani", animation->name);
-    mz_path_combine_path(folder, filename, fullpath, sizeof(fullpath));   
-    logI("PATH -> %s", fullpath);
+    mz_path_combine_path(fullpath, sizeof(fullpath), folder, filename);   
 
     fp = mz_fopen(fullpath, "w");
 
@@ -199,6 +198,7 @@ MZ_API mz_animation_t* mz_animation_load(const char *ani_file)
     FILE *fp;
     int i, j, k;
     ani_info_t info;
+    char buf[512];
 
     assert(ani_file);
     assert(mz_str_is_end_with(ani_file, ".ani"));
@@ -212,6 +212,14 @@ MZ_API mz_animation_t* mz_animation_load(const char *ani_file)
 
     for (i = 0; i < info.image_count; i++)
         info.images[i] = mz_file_read_string(fp);
+
+    ani->nimage = info.image_count;
+    for (i = 0; i < info.image_count; i++) {
+        char folder[512];
+        mz_path_get_folder(folder, sizeof(folder), ani_file);
+        mz_path_combine_path(buf, sizeof(buf), folder, info.images[i]);
+        ani->images[i] = mz_image_load(buf);
+    }
 
     ani->name = mz_file_read_string(fp);
     ani->nsequence = mz_file_read_int(fp);
@@ -242,7 +250,15 @@ MZ_API mz_animation_t* mz_animation_load(const char *ani_file)
 
     }
 
+    if (ani->nsequence)
+        ani->cur_sequence = ani->sequences[0];
+
+    if (ani->cur_sequence && ani->cur_sequence->nframe)
+        ani->cur_sequence->cur_frame = ani->cur_sequence->frames[0];
+
     mz_fclose(fp);
+
+    return ani;
 }
 
 static void generate_one_ani_file(animation_set_tag_t *set, const char *anim_name, const char *folder)

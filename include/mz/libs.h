@@ -35,7 +35,8 @@ MZ_API int      mz_pow_int(int base, int x);
 MZ_API int      mz_is_power_of_2(int v);
 MZ_API int      mz_get_larger_power_of_2(int v);
 
-MZ_API char*    mz_path_combine_path(const char* folder, const char* filename, char *ret_path, int max_path_size);
+MZ_API char*    mz_path_combine_path(char *ret_path, int max_path_size, const char *folder, const char *filename);
+MZ_API char* mz_path_get_folder(char* buf, int max_size, const char *filename);
 
 #define logI(args...) mz_print_log("Info", args) 
 #define logE(args...) mz_print_log("Error", args) 

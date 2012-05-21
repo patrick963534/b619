@@ -1,64 +1,18 @@
 <?xml version='1.0' encoding='utf-8'?>
 <package>
   <animationSet>
-    <animation name="background@320x240" loop="false">
+    <animation name="fruite" loop="false">
       <frame>
-        <image originX="160" originY="120">../06_28-BG.png</image>
-        <image originY="120" originX="160">../06_28-Cover.png</image>
-      </frame>
-    </animation>
-    <animation name="arrows.down" loop="false">
-      <frame duration="100">
-        <image originX="160" originY="120">../06_28-down01.png</image>
+        <image originX="85" originY="85">1.png</image>
       </frame>
       <frame>
-        <image originX="160" originY="120">../06_28-down02.png</image>
-      </frame>
-    </animation>
-    <animation name="arrows.up" loop="false">
-      <frame>
-        <image originX="160" originY="120">../06_28-up01.png</image>
+        <image originX="85" originY="85">2.png</image>
       </frame>
       <frame>
-        <image originX="160" originY="120">../06_28-up02.png</image>
-      </frame>
-    </animation>
-    <animation name="girl" loop="true">
-      <frame>
-        <image originX="160" originY="120">../06_28-GRIL01.png</image>
+        <image originX="85" originY="85">3.png</image>
       </frame>
       <frame>
-        <image originX="160" originY="120">../06_28-GRIL02.png</image>
-      </frame>
-      <frame>
-        <image originX="160" originY="120">../06_28-GRIL03.png</image>
-      </frame>
-      <frame>
-        <image originX="160" originY="120">../06_28-GRIL04.png</image>
-      </frame>
-      <frame>
-        <image originX="160" originY="120">../06_28-GRIL05.png</image>
-      </frame>
-      <frame>
-        <image originX="160" originY="120">../06_28-GRIL06.png</image>
-      </frame>
-      <frame>
-        <image originX="160" originY="120">../06_28-GRIL07.png</image>
-        <image originY="120" originX="160">AnimiLetter-07.png</image>
-      </frame>
-      <frame>
-        <image originX="160" originY="120">../06_28-GRIL08.png</image>
-        <image originY="120" originX="160">AnimiLetter-08.png</image>
-      </frame>
-      <frame>
-        <image originX="160" originY="120">../06_28-GRIL09.png</image>
-        <image originY="120" originX="160">AnimiLetter-09.png</image>
-      </frame>
-    </animation>
-    <animation name="background@480x272" loop="false">
-      <frame>
-        <image originX="240" originY="136">../06_28-BG480x272.png</image>
-        <image originY="136" originX="240">../06_28-Cover480x272.png</image>
+        <image originX="85" originY="85">4.png</image>
       </frame>
     </animation>
   </animationSet>

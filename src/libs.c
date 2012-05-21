@@ -80,7 +80,7 @@ MZ_API int mz_get_larger_power_of_2(int v)
         return mz_pow_int(2, mz_log2_int(v)+ 1);
 }
 
-MZ_API char* mz_path_combine_path(const char* folder, const char* filename, char *ret_path, int max_path_size)
+MZ_API char* mz_path_combine_path(char *ret_path, int max_path_size, const char* folder, const char* filename)
 {
     int len = strlen(folder);
 
@@ -92,6 +92,22 @@ MZ_API char* mz_path_combine_path(const char* folder, const char* filename, char
     assert(strlen(ret_path) < max_path_size);
 
     return ret_path;
+}
+
+MZ_API char* mz_path_get_folder(char* buf, int max_size, const char *filename)
+{
+    char *v = strrchr(filename, '/');
+    int length = strlen(filename) - strlen(v);
+    char *str = mz_malloc(length + 2);
+
+    memcpy(str, filename, length);
+    str[length] = '/';
+    str[length + 1] = '\0';
+
+    assert(strlen(str) < max_size);
+    memcpy(buf, str, strlen(str) + 1);
+
+    return buf;
 }
 
 MZ_API void mz_snprintf(char *buf, int max_size, const char *format, ...)
