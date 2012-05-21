@@ -214,6 +214,7 @@ MZ_API mz_animation_t* mz_animation_load(const char *ani_file)
         info.images[i] = mz_file_read_string(fp);
 
     ani->nimage = info.image_count;
+    ani->images = mz_malloc(sizeof(ani->images[0]) * ani->nimage);
     for (i = 0; i < info.image_count; i++) {
         char folder[512];
         mz_path_get_folder(folder, sizeof(folder), ani_file);
@@ -250,11 +251,7 @@ MZ_API mz_animation_t* mz_animation_load(const char *ani_file)
 
     }
 
-    if (ani->nsequence)
-        ani->cur_sequence = ani->sequences[0];
-
-    if (ani->cur_sequence && ani->cur_sequence->nframe)
-        ani->cur_sequence->cur_frame = ani->cur_sequence->frames[0];
+    ani->cur_sequence_id = 0;
 
     mz_fclose(fp);
 
@@ -272,10 +269,6 @@ static void generate_one_ani_file(animation_set_tag_t *set, const char *anim_nam
     animation->sequences = mz_malloc(sizeof(animation->sequences[0]) * nitem);
 
     get_unique_image_names_in_one_animation(set, anim_name, &ani_info.images, &ani_info.image_count);
-
-    logI("image count -> %d", ani_info.image_count);
-    for (i = 0; i < ani_info.image_count; i++)
-        logI("image file -> %s", ani_info.images[i]);
 
     for (i = 0; i < set->nanimation; i++) {
         animation_tag_t *ani_tag = set->animations[i];

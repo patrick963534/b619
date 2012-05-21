@@ -27,6 +27,7 @@ typedef struct mz_sequence_t
     int         nframe;
 
     mz_frame_t  *cur_frame;
+    int         cur_frame_id;
 } mz_sequence_t;
 
 typedef struct mz_animation_t
@@ -36,6 +37,7 @@ typedef struct mz_animation_t
     int             nsequence;
 
     mz_sequence_t   *cur_sequence;
+    int             cur_sequence_id;
 
     mz_image_t      **images;
     int             nimage;
