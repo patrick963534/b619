@@ -11,7 +11,7 @@ MZ_API mz_xml_t* mz_xml_load(const char *file)
 
     ctxt = xmlNewParserCtxt();
 
-    if (doc == NULL) {
+    if (ctxt == NULL) {
         logI("Can't parse the content: %s\n", file);
         goto error;
     }

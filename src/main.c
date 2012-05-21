@@ -52,8 +52,7 @@ static int on(mz_node_t *self, mz_event_t *e)
 
 mz_scene_t* mz_main()
 {
-
-    //mz_animation_t *animation = mz_animation_load("/home/patrick/pluto/project/libmz/res/animation/basic.xml");
+    mz_animation_t *animation = mz_animation_load("res/animation/background@320x240.ani");
 
     mz_animation_generate_ani_file("res/animation/basic.xml", "res/animation/");
 

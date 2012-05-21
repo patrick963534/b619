@@ -200,7 +200,7 @@ MZ_API mz_animation_t* mz_animation_load(const char *ani_file)
     int i, j, k;
     ani_info_t info;
 
-    assert(!ani_file);
+    assert(ani_file);
     assert(mz_str_is_end_with(ani_file, ".ani"));
 
     ani = mz_malloc(sizeof(*ani));
