@@ -36,10 +36,7 @@ static int on(mz_node_t *self_, mz_event_t *e)
 
 mz_scene_t* mz_main()
 {
-    mz_animation_t *animation;
     mz_animation_generate_ani_file("res/animation/basic.xml", "res/animation/");
-
-    //animation = mz_animation_load("res/animation/background@320x240.ani");
 
     test_scene_t *scene = (test_scene_t*)mz_scene_new(sizeof(*scene), NULL);
 
