@@ -12,6 +12,7 @@ typedef struct test_scene_t
     extends_scene();
 
     mz_actor_t *actor;
+    mz_actor_t *actor2;
 } test_scene_t;
 
 static void step(mz_node_t *self, int ellapse)
@@ -41,9 +42,13 @@ mz_scene_t* mz_main()
     test_scene_t *scene = (test_scene_t*)mz_scene_new(sizeof(*scene), NULL);
 
     scene->actor = mz_actor_new("res/animation/fruite.ani", sizeof(*scene->actor), (mz_node_t*)scene);
+    scene->actor2 = mz_actor_new("res/animation/fruite.ani", sizeof(*scene->actor2), (mz_node_t*)scene);
 
     scene->actor->x = 75;
     scene->actor->y = 75;
+
+    scene->actor2->x = 200;
+    scene->actor2->y = 200;
 
     scene->on = on;
     scene->step = step;
