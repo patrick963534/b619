@@ -251,7 +251,7 @@ MZ_API mz_animation_t* mz_animation_load(const char *ani_file)
 
     }
 
-    ani->cur_sequence_id = 0;
+    ani->cur_sequence = ani->sequences[0];
 
     mz_fclose(fp);
 
