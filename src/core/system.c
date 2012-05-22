@@ -15,11 +15,16 @@ static int get_timer_event(mz_event_t *event)
 static int get_update_event(mz_event_t *event)
 {
     static Uint32 time = 0;
+
+    if (time == 0)
+        time =SDL_GetTicks();
+
     Uint32 new_time = SDL_GetTicks();
 
-    if (new_time - time > 30) {
-        time = new_time;
+    if (new_time - time > 20) {
+        event->ellapse = new_time - time;
         event->type = mz.events.UpdateFrame;
+        time = new_time;
         return 1;
     }
 
@@ -55,6 +60,11 @@ static void wait_event(mz_event_t *event)
 
 		mz_sleep(32);
 	}
+}
+
+int mz_system_get_ellapse()
+{
+    return 0;
 }
 
 void mz_system_init()

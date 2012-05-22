@@ -35,13 +35,24 @@ MZ_API void mz_actor_destruct(mz_object_t* self_)
 MZ_API void mz_actor_step(mz_node_t *self_, int ellapse)
 {
     mz_downcast(mz_actor_t);
+
     mz_animation_t *ani = self->animation;
     mz_sequence_t *seq = ani->cur_sequence;
 
-    if (++seq->cur_frame_id >= seq->nframe)
-        seq->cur_frame_id = 0;
+    if (!seq->nframe)
+        return;
 
+    seq->ellapse_time += ellapse;
     seq->cur_frame = seq->frames[seq->cur_frame_id];
+
+    while (seq->ellapse_time > seq->cur_frame->duration) {
+        seq->ellapse_time -= seq->cur_frame->duration;
+
+        if (++seq->cur_frame_id >= seq->nframe)
+            seq->cur_frame_id = 0;
+
+        seq->cur_frame = seq->frames[seq->cur_frame_id];
+    }
 }
 
 MZ_API mz_actor_t* mz_actor_new(const char *ani_file, size_t size, mz_node_t *parent)

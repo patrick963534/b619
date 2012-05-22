@@ -157,7 +157,6 @@ static void write_to_ani_file(mz_animation_t *animation, const char *folder, ani
 
     mz_snprintf(filename, sizeof(filename), "%s.ani", animation->name);
     mz_path_combine_path(fullpath, sizeof(fullpath), folder, filename);   
-
     fp = mz_fopen(fullpath, "w");
 
     {

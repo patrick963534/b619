@@ -12,6 +12,7 @@ typedef struct mz_keyboard_t
 typedef struct mz_event_t
 {
 	int		type;
+    int     ellapse;
 	mz_keyboard_t 	keyboard;
 } mz_event_t;
 

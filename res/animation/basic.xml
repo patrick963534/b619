@@ -2,16 +2,16 @@
 <package>
   <animationSet>
     <animation name="fruite" loop="false">
-      <frame>
+      <frame duration="300">
         <image originX="85" originY="85">1.png</image>
       </frame>
-      <frame>
+      <frame duration="300">
         <image originX="85" originY="85">2.png</image>
       </frame>
-      <frame>
+      <frame duration="300">
         <image originX="85" originY="85">3.png</image>
       </frame>
-      <frame>
+      <frame duration="300">
         <image originX="85" originY="85">4.png</image>
       </frame>
     </animation>

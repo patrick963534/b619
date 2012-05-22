@@ -20,9 +20,9 @@ static void director_render()
     mz_graphics_flush();
 }
 
-static void director_update()
+static void director_update(int ellapse)
 {
-    mz_node_step((mz_node_t*)g_director->cur_scene, 0);
+    mz_node_step((mz_node_t*)g_director->cur_scene, ellapse);
 }
 
 static void director_event(mz_event_t *e)
@@ -90,8 +90,9 @@ int main(int argc, char** argv)
 		mz_system_instance()->wait_event(&event);
 
         if (event.type == mz.events.UpdateFrame)
-			director_update();
-        else if (event.type == mz.events.KeyUp && event.keyboard.keycode == mz.keys.Escape)
+			director_update(event.ellapse);
+        else if (event.type == mz.events.KeyUp && 
+                 event.keyboard.keycode == mz.keys.Escape)
 			break;
         else
             director_event(&event);

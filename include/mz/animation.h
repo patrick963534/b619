@@ -28,6 +28,8 @@ typedef struct mz_sequence_t
 
     mz_frame_t  *cur_frame;
     int         cur_frame_id;
+
+    int         ellapse_time;
 } mz_sequence_t;
 
 typedef struct mz_animation_t
