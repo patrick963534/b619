@@ -150,6 +150,11 @@ static void write_to_ani_file(mz_animation_t *animation, const char *folder, ani
     char fullpath[256];
     char filename[256];
 
+    if (!animation->nsequence) 
+        logE("animation %s MUST have at least one sequence.", animation->name);
+
+    assert(animation->nsequence > 0);
+
     mz_snprintf(filename, sizeof(filename), "%s.ani", animation->name);
     mz_path_combine_path(fullpath, sizeof(fullpath), folder, filename);   
 

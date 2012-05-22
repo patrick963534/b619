@@ -13,10 +13,10 @@ MZ_API void mz_actor_draw(mz_node_t *self_)
     mz_image_t *img;
     int i;
 
-    if (!self->animation->cur_sequence || !self->animation->cur_sequence->cur_frame)
-        return;
-
     frame = self->animation->cur_sequence->cur_frame;
+
+    if (!frame)
+        return;
 
     for (i = 0; i < frame->npattern; i++) {
         int x = self->x - frame->patterns[i]->origin_x;
